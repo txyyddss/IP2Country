@@ -1,4 +1,4 @@
 .cache/
-dist/
-geoipgen
-geoipgen.exe
+/dist/
+/geoipgen
+/geoipgen.exe
