@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/oschwald/maxminddb-golang/v2"
 	"net/http"
 	"net/http/httptest"
+	"net/netip"
 	"os"
 	"path/filepath"
 	"testing"
@@ -15,7 +17,7 @@ func TestEndToEndBuildWithSingBoxCompiler(t *testing.T) {
 		t.Skip("set SING_BOX_BIN to run the integration test")
 	}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, _ = w.Write([]byte("network,country_code\n8.8.8.0/24,US\n2001:4860::/64,US\n"))
+		_, _ = w.Write([]byte("network,country_code\n8.8.8.0/25,US\n8.8.8.128/25,JP\n2001:4860::/65,US\n2001:4860:0:0:8000::/65,JP\n"))
 	}))
 	defer server.Close()
 
@@ -45,6 +47,24 @@ func TestEndToEndBuildWithSingBoxCompiler(t *testing.T) {
 	}
 	if !contains(string(readmeBytes), "Fixture") || !contains(string(readmeBytes), "US") {
 		t.Fatalf("README statistics were not refreshed: %s", readmeBytes)
+	}
+	db, err := maxminddb.Open(filepath.Join(outDir, "country.mmdb"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	for ip, want := range map[string]string{"8.8.8.1": "US", "8.8.8.200": "JP", "2001:4860::1": "US", "2001:4860:0:0:8000::1": "JP"} {
+		var rec struct {
+			Country struct {
+				Code string `maxminddb:"iso_code"`
+			} `maxminddb:"country"`
+		}
+		if err := db.Lookup(netip.MustParseAddr(ip)).Decode(&rec); err != nil {
+			t.Fatal(err)
+		}
+		if rec.Country.Code != want {
+			t.Fatalf("%s: got %s want %s", ip, rec.Country.Code, want)
+		}
 	}
 }
 

@@ -15,6 +15,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -29,10 +30,11 @@ import (
 )
 
 type Result struct {
-	Records  []model.Record
-	Filters  []netip.Prefix
-	Parsed   int64
-	Rejected int64
+	Records   []model.Record
+	Filters   []netip.Prefix
+	Parsed    int64
+	Rejected  int64
+	NoCountry int64
 }
 
 type Collector struct {
@@ -74,8 +76,12 @@ func ParseFile(s config.Source, path string, order int) (Result, error) {
 
 func (c *Collector) add(prefix netip.Prefix, country string) {
 	country = normalizeCountry(country)
-	if !prefix.IsValid() || country == "" {
+	if !prefix.IsValid() {
 		c.Result.Rejected++
+		return
+	}
+	if country == "" {
+		c.Result.NoCountry++
 		return
 	}
 	prefix = prefix.Masked()
@@ -93,6 +99,12 @@ func (c *Collector) add(prefix netip.Prefix, country string) {
 
 func normalizeCountry(raw string) string {
 	s := strings.ToUpper(strings.TrimSpace(raw))
+	if s == "UK" {
+		return "GB"
+	}
+	if s == "XK" {
+		return "XK"
+	}
 	if len(s) == 2 && s[0] >= 'A' && s[0] <= 'Z' && s[1] >= 'A' && s[1] <= 'Z' {
 		cc := countries.ByName(s)
 		if cc.Alpha2() == s {
@@ -199,7 +211,11 @@ func detectColumns(row []string, s config.Source) columns {
 			x.start = i
 		case "endip", "ipend", "ipto", "end", "to", "iptointeger", "ipendinteger":
 			x.end = i
-		case "country", "countrycode", "countryiso", "countryisocode", "iso", "isocode", "cc", "iso3166":
+		case "country":
+			if x.country < 0 {
+				x.country = i
+			}
+		case "countrycode", "countryiso", "countryisocode", "iso", "isocode", "cc", "iso3166":
 			x.country = i
 		}
 	}
@@ -221,7 +237,7 @@ func detectColumns(row []string, s config.Source) columns {
 	if x.cidr < 0 && x.start < 0 {
 		x.cidr = 0
 	}
-	if x.start < 0 && x.cidr == 0 && len(row) >= 3 && parseIPToken(row[0], s.Family).IsValid() && parseIPToken(row[1], s.Family).IsValid() {
+	if x.start < 0 && x.cidr == 0 && len(row) >= 3 && parseIPToken(row[0], s.Family, s.IPEncoding).IsValid() && parseIPToken(row[1], s.Family, s.IPEncoding).IsValid() {
 		x.cidr, x.start, x.end = -1, 0, 1
 	}
 	if x.country < 0 && len(row) >= 2 {
@@ -270,35 +286,23 @@ func (c *Collector) parseCSVRow(row []string, idx columns) error {
 	}
 	var prefixes []netip.Prefix
 	if idx.cidr >= 0 && get(idx.cidr) != "" {
-		p, err := parsePrefixOrAddress(get(idx.cidr), c.Source.Family)
+		p, err := parsePrefixOrAddress(get(idx.cidr), c.Source.Family, c.Source.IPEncoding)
 		if err == nil {
 			prefixes = []netip.Prefix{p}
 		}
 	} else {
-		start, end := parseIPToken(get(idx.start), c.Source.Family), parseIPToken(get(idx.end), c.Source.Family)
+		start, end := parseIPToken(get(idx.start), c.Source.Family, c.Source.IPEncoding), parseIPToken(get(idx.end), c.Source.Family, c.Source.IPEncoding)
 		if start.IsValid() && end.IsValid() && start.Is4() == end.Is4() {
 			prefixes = iprange.RangeToPrefixes(start, end)
 		}
 	}
 	if len(prefixes) == 0 {
-		// Some feeds put the prefix and ISO country in columns that have no header.
-		for _, value := range row {
-			if p, err := parsePrefixOrAddress(strings.TrimSpace(value), c.Source.Family); err == nil {
-				prefixes = []netip.Prefix{p}
-				break
-			}
-		}
-		if country == "" {
-			for _, value := range row {
-				if normalizeCountry(value) != "" {
-					country = value
-					break
-				}
-			}
-		}
-	}
-	if country == "" || len(prefixes) == 0 {
 		return fmt.Errorf("row has no recognized network or country")
+	}
+	// Unknown locations and regional tags (for example EU) cannot cast a country vote.
+	if normalizeCountry(country) == "" {
+		c.Result.NoCountry++
+		return nil
 	}
 	for _, p := range prefixes {
 		c.add(p, country)
@@ -306,15 +310,15 @@ func (c *Collector) parseCSVRow(row []string, idx columns) error {
 	return nil
 }
 
-func parseIPToken(s, family string) netip.Addr {
+func parseIPToken(s, family, encoding string) netip.Addr {
 	s = strings.TrimSpace(strings.Trim(s, "\"'"))
 	if a, err := netip.ParseAddr(s); err == nil {
 		return a.Unmap()
 	}
 	if family == "ipv6" {
-		value := strings.ToLower(strings.TrimPrefix(s, "0x"))
+		value := strings.TrimPrefix(strings.ToLower(s), "0x")
 		base := 10
-		if len(value) == 32 || strings.ContainsAny(value, "abcdef") {
+		if encoding == "hex" || encoding == "" && (strings.HasPrefix(strings.ToLower(s), "0x") || len(value) == 32 || strings.ContainsAny(value, "abcdef")) {
 			base = 16
 		}
 		if n, ok := new(big.Int).SetString(value, base); ok && n.Sign() >= 0 && n.BitLen() <= 128 {
@@ -325,7 +329,12 @@ func parseIPToken(s, family string) netip.Addr {
 		}
 	}
 	if family == "ipv4" {
-		if n, ok := new(big.Int).SetString(s, 10); ok && n.Sign() >= 0 && n.BitLen() <= 32 {
+		base := 10
+		if encoding == "hex" || encoding == "" && (strings.HasPrefix(strings.ToLower(s), "0x") || strings.ContainsAny(strings.ToLower(s), "abcdef")) {
+			base = 16
+		}
+		value := strings.TrimPrefix(strings.ToLower(s), "0x")
+		if n, ok := new(big.Int).SetString(value, base); ok && n.Sign() >= 0 && n.BitLen() <= 32 {
 			var raw [4]byte
 			b := n.Bytes()
 			copy(raw[4-len(b):], b)
@@ -335,12 +344,12 @@ func parseIPToken(s, family string) netip.Addr {
 	return netip.Addr{}
 }
 
-func parsePrefixOrAddress(s, family string) (netip.Prefix, error) {
+func parsePrefixOrAddress(s, family, encoding string) (netip.Prefix, error) {
 	s = strings.TrimSpace(strings.Trim(s, "\"'"))
 	if p, err := netip.ParsePrefix(s); err == nil {
 		return p.Masked(), nil
 	}
-	if a := parseIPToken(s, family); a.IsValid() {
+	if a := parseIPToken(s, family, encoding); a.IsValid() {
 		return netip.PrefixFrom(a, a.BitLen()), nil
 	}
 	return netip.Prefix{}, fmt.Errorf("invalid IP network %q", s)
@@ -406,7 +415,7 @@ func (c *Collector) parseTextPath(path string) error {
 				}
 			}
 		}
-		p, e := parsePrefixOrAddress(network, c.Source.Family)
+		p, e := parsePrefixOrAddress(network, c.Source.Family, c.Source.IPEncoding)
 		if e != nil || country == "" {
 			c.Result.Rejected++
 			continue
@@ -522,7 +531,21 @@ func (c *Collector) walkJSON(v any, inherited string) error {
 	case map[string]any:
 		country := c.Source.CountryOverride
 		if country == "" {
-			country = inherited
+			// Explicit ISO fields beat display names and inherited country keys.
+			for _, name := range []string{"countrycode", "countryisocode", "isocode", "iso3166", "cc", "country"} {
+				for k, value := range x {
+					if normalizeHeader(k) == name && normalizeCountry(fmt.Sprint(value)) != "" {
+						country = fmt.Sprint(value)
+						break
+					}
+				}
+				if country != "" {
+					break
+				}
+			}
+			if country == "" {
+				country = inherited
+			}
 		}
 		var network, prefixLength string
 		var start, end string
@@ -551,13 +574,13 @@ func (c *Collector) walkJSON(v any, inherited string) error {
 		}
 		added := false
 		if network != "" && country != "" {
-			if p, e := parsePrefixOrAddress(network, c.Source.Family); e == nil {
+			if p, e := parsePrefixOrAddress(network, c.Source.Family, c.Source.IPEncoding); e == nil {
 				c.add(p, country)
 				added = true
 			}
 		}
 		if start != "" && end != "" && country != "" {
-			a, b := parseIPToken(start, c.Source.Family), parseIPToken(end, c.Source.Family)
+			a, b := parseIPToken(start, c.Source.Family, c.Source.IPEncoding), parseIPToken(end, c.Source.Family, c.Source.IPEncoding)
 			if a.IsValid() && b.IsValid() {
 				for _, p := range iprange.RangeToPrefixes(a, b) {
 					c.add(p, country)
@@ -568,7 +591,13 @@ func (c *Collector) walkJSON(v any, inherited string) error {
 		if !added && c.Source.Role == "filter" {
 			c.parseFilterObject(x)
 		}
-		for k, child := range x {
+		keys := make([]string, 0, len(x))
+		for k := range x {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			child := x[k]
 			next := inherited
 			if normalizeCountry(k) != "" {
 				next = normalizeCountry(k)
@@ -598,7 +627,7 @@ func (c *Collector) parseFilterObject(x map[string]any) {
 	for k, v := range x {
 		key := normalizeHeader(k)
 		if key == "prefix" || key == "network" || key == "cidr" || key == "addressblock" {
-			if p, e := parsePrefixOrAddress(fmt.Sprint(v), ""); e == nil {
+			if p, e := parsePrefixOrAddress(fmt.Sprint(v), "", ""); e == nil {
 				c.Result.Filters = append(c.Result.Filters, p)
 			}
 		}
@@ -626,7 +655,7 @@ func (c *Collector) parseMMDB(path string) error {
 			country = findCountryValue(rec)
 		}
 		if country == "" {
-			c.Result.Rejected++
+			c.Result.NoCountry++
 			continue
 		}
 		c.add(result.Prefix(), country)

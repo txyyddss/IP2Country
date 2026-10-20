@@ -23,6 +23,7 @@ func BuildSummary(sources []model.SourceStatus, blocks []consensus.Block, inputR
 	stats := make(map[string]*model.CountryStats)
 	weight := make(map[string]*big.Rat)
 	confidence := make(map[string]*big.Rat)
+	units4, units6 := make(map[string]*big.Rat), make(map[string]*big.Rat)
 	for _, b := range blocks {
 		if !b.Prefix.IsValid() {
 			continue
@@ -33,6 +34,7 @@ func BuildSummary(sources []model.SourceStatus, blocks []consensus.Block, inputR
 			stats[b.Country] = s
 			weight[b.Country] = new(big.Rat)
 			confidence[b.Country] = new(big.Rat)
+			units4[b.Country], units6[b.Country] = new(big.Rat), new(big.Rat)
 		}
 		unitPrefix := 24
 		if b.Prefix.Addr().Is6() {
@@ -43,9 +45,9 @@ func BuildSummary(sources []model.SourceStatus, blocks []consensus.Block, inputR
 		}
 		cells := cellWeight(b.Prefix, unitPrefix)
 		if unitPrefix == 24 {
-			s.IPv4Cells = addDecimal(s.IPv4Cells, cells)
+			units4[b.Country].Add(units4[b.Country], cells)
 		} else {
-			s.IPv6Cells = addDecimal(s.IPv6Cells, cells)
+			units6[b.Country].Add(units6[b.Country], cells)
 		}
 		addresses := addressWeight(b.Prefix)
 		conf := new(big.Rat).SetFloat64(b.Confidence / 100)
@@ -55,6 +57,7 @@ func BuildSummary(sources []model.SourceStatus, blocks []consensus.Block, inputR
 		}
 	}
 	for cc, s := range stats {
+		s.IPv4Cells, s.IPv6Cells = decimalUnits(units4[cc]), decimalUnits(units6[cc])
 		if weight[cc].Sign() > 0 {
 			avg := new(big.Rat).Quo(confidence[cc], weight[cc])
 			f, _ := avg.Float64()
@@ -98,8 +101,8 @@ func UpdateREADME(path string, summary model.RunSummary) error {
 func render(summary model.RunSummary) string {
 	var b strings.Builder
 	b.WriteString("## Generated data status\n\n")
-	fmt.Fprintf(&b, "Last run: `%s`  \nInput rows: **%d** · Published blocks: **%d**\n\n", summary.GeneratedAt, summary.InputRecords, summary.OutputBlocks)
-	b.WriteString("### Source availability\n\n| Source | Status | IPv4 rows | IPv6 rows | Rejected | Bytes | Details |\n|---|---:|---:|---:|---:|---:|---|\n")
+	fmt.Fprintf(&b, "Last run: `%s`\n\nInput rows: **%d** · Published blocks: **%d**\n\n", summary.GeneratedAt, summary.InputRecords, summary.OutputBlocks)
+	b.WriteString("### Source availability\n\n| Source | Status | IPv4 rows | IPv6 rows | Rejected | No country | Bytes | Details |\n|---|---:|---:|---:|---:|---:|---:|---|\n")
 	for _, s := range summary.Sources {
 		details := s.URL
 		if details == "" {
@@ -109,11 +112,11 @@ func render(summary model.RunSummary) string {
 			details = s.Error
 		}
 		details = strings.ReplaceAll(details, "|", "\\|")
-		fmt.Fprintf(&b, "| %s | %s | %d | %d | %d | %d | %s |\n", s.Name, s.Status, s.IPv4Records, s.IPv6Records, s.RejectedRows, s.Bytes, details)
+		fmt.Fprintf(&b, "| %s | %s | %d | %d | %d | %d | %d | %s |\n", s.Name, s.Status, s.IPv4Records, s.IPv6Records, s.RejectedRows, s.NoCountryRows, s.Bytes, details)
 	}
 	b.WriteString("\n### Final country coverage\n\n| Country | IPv4 blocks | IPv4 /24 units | IPv6 blocks | IPv6 /64 units | Average confidence |\n|---|---:|---:|---:|---:|---:|\n")
 	for _, c := range summary.Countries {
-		fmt.Fprintf(&b, "| %s | %d | %s | %d | %s | %s |\n", c.Country, c.IPv4Blocks, c.IPv4Cells, c.IPv6Blocks, c.IPv6Cells, c.AverageConf)
+		fmt.Fprintf(&b, "| %s | %d | %s | %d | %s | %s |\n", c.Country, c.IPv4Blocks, roundedUnits(c.IPv4Cells), c.IPv6Blocks, roundedUnits(c.IPv6Cells), c.AverageConf)
 	}
 	if len(summary.Sources) == 0 {
 		b.WriteString("\nNo source results were recorded.\n")
@@ -133,15 +136,17 @@ func addressWeight(p netip.Prefix) *big.Rat {
 	return new(big.Rat).SetInt(new(big.Int).Lsh(big.NewInt(1), uint(p.Addr().BitLen()-p.Bits())))
 }
 
-func addDecimal(current string, value *big.Rat) string {
-	base := new(big.Rat)
-	if current != "" {
-		if _, ok := base.SetString(current); !ok {
-			base.SetInt64(0)
-		}
+func decimalUnits(value *big.Rat) string {
+	// Prefix weights have power-of-two denominators, at most 2^64. Keeping
+	// 64 decimal places represents them exactly, even for a single IPv6 /128.
+	return strings.TrimRight(strings.TrimRight(value.FloatString(64), "0"), ".")
+}
+
+func roundedUnits(value string) string {
+	if n, ok := new(big.Rat).SetString(value); ok {
+		return n.FloatString(0)
 	}
-	base.Add(base, value)
-	return base.FloatString(4)
+	return "0"
 }
 
 func timeNowUTC() string { return time.Now().UTC().Format(time.RFC3339) }

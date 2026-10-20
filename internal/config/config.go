@@ -29,6 +29,7 @@ type Source struct {
 	URLs            []string `json:"urls"`
 	FallbackURLs    []string `json:"fallback_urls"`
 	Family          string   `json:"family"`
+	IPEncoding      string   `json:"ip_encoding,omitempty"`
 	CountryOverride string   `json:"country_override"`
 	TextRegex       string   `json:"text_regex"`
 	Delimiter       string   `json:"delimiter"`
@@ -61,6 +62,10 @@ func Load(path string) (File, error) {
 		s.ID = strings.TrimSpace(s.ID)
 		s.Name = strings.TrimSpace(s.Name)
 		s.Format = strings.ToLower(strings.TrimSpace(s.Format))
+		s.IPEncoding = strings.ToLower(strings.TrimSpace(s.IPEncoding))
+		if s.IPEncoding != "" && s.IPEncoding != "hex" && s.IPEncoding != "decimal" {
+			return File{}, fmt.Errorf("source %q has unknown IP encoding %q", s.ID, s.IPEncoding)
+		}
 		if s.ID == "" || s.Name == "" || len(s.URLs) == 0 {
 			return File{}, fmt.Errorf("source %d must have id, name, and at least one URL", i)
 		}

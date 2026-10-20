@@ -8,13 +8,114 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/maxmind/mmdbwriter"
+	"github.com/maxmind/mmdbwriter/mmdbtype"
 	"github.com/txyyddss/ip2country/internal/config"
 	"github.com/v2fly/geoip/plugin/v2ray"
+	"go4.org/netipx"
 	"google.golang.org/protobuf/proto"
 )
 
 func testSource(format string) config.Source {
 	return config.Source{ID: "fixture", Name: "fixture", VoteGroup: "fixture", Role: "country", Format: format, URLs: []string{"fixture"}}
+}
+
+func TestHexadecimalIPv4Ranges(t *testing.T) {
+	s := testSource("tsv")
+	s.Family = "ipv4"
+	s.IPEncoding = "hex"
+	r, err := ParseFile(s, writeTemp(t, "hex.tsv", []byte("1000000\t10000ff\tAU\nffffffff\tffffffff\tUS\n")), 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Rejected != 0 || len(r.Records) != 2 || r.Records[0].Prefix.String() != "1.0.0.0/24" || r.Records[1].Prefix.String() != "255.255.255.255/32" {
+		t.Fatalf("unexpected hexadecimal ranges: %+v", r)
+	}
+}
+
+func TestCountryCodePrecedesCountryName(t *testing.T) {
+	for _, header := range []string{"country_code,country", "country,country_code"} {
+		row := "US,unrecognized country name"
+		if header == "country,country_code" {
+			row = "unrecognized country name,US"
+		}
+		r, err := ParseFile(testSource("csv"), writeTemp(t, "ipapi.csv", []byte("start_ip,end_ip,"+header+"\n8.8.8.0,8.8.8.255,"+row+"\n")), 0)
+		if err != nil || r.Rejected != 0 || r.NoCountry != 0 || len(r.Records) != 1 || r.Records[0].Country != "US" {
+			t.Fatalf("unexpected ISO column choice: %+v, %v", r, err)
+		}
+	}
+}
+
+func TestMalformedRangeCannotBecomeHostVote(t *testing.T) {
+	r, err := ParseFile(testSource("csv"), writeTemp(t, "bad.csv", []byte("start_ip,end_ip,country_code\n8.8.8.0,8.8.8.255,US\n8.8.9.0,broken,JP\n8.8.10.255,8.8.10.0,JP\n")), 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Rejected != 2 || len(r.Records) != 1 {
+		t.Fatalf("malformed endpoint silently accepted: %+v", r)
+	}
+}
+
+func TestNoCountryIsSeparateFromMalformedRows(t *testing.T) {
+	r, err := ParseFile(testSource("csv"), writeTemp(t, "no-country.csv", []byte("network,country_code\n8.8.8.0/24,US\n8.8.9.0/24,EU\n8.8.10.0/24,\n8.8.11.0/24,XK\n8.8.12.0/24,UK\n")), 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Rejected != 0 || r.NoCountry != 2 || len(r.Records) != 3 || r.Records[1].Country != "XK" || r.Records[2].Country != "GB" {
+		t.Fatalf("unexpected no-country handling: %+v", r)
+	}
+}
+
+func TestExplicitDecimalIPv6Encoding(t *testing.T) {
+	s := testSource("tsv")
+	s.Family = "ipv6"
+	s.IPEncoding = "decimal"
+	value := "10000000000000000000000000000000"
+	r, err := ParseFile(s, writeTemp(t, "decimal.tsv", []byte(value+"\t"+value+"\tUS\n")), 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(r.Records) != 1 || r.Records[0].Prefix.String() != "0:7e:37be:2022:c091:4b26:8000:0/128" {
+		t.Fatalf("ambiguous decimal IPv6 misread: %+v", r)
+	}
+}
+
+func TestMMDBMetadataDoesNotCastCountryVote(t *testing.T) {
+	db, err := mmdbwriter.New(mmdbwriter.Options{DatabaseType: "Test-Country", IPVersion: 6})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, row := range []struct {
+		prefix string
+		data   mmdbtype.Map
+	}{
+		{"8.8.8.0/24", mmdbtype.Map{"country": mmdbtype.Map{"iso_code": mmdbtype.String("US")}}},
+		{"8.8.9.0/24", mmdbtype.Map{"rir": mmdbtype.String("arin")}},
+	} {
+		if err := db.Insert(netipx.PrefixIPNet(netip.MustParsePrefix(row.prefix)), row.data); err != nil {
+			t.Fatal(err)
+		}
+	}
+	path := filepath.Join(t.TempDir(), "metadata.mmdb")
+	f, err := os.Create(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = db.WriteTo(f)
+	closeErr := f.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if closeErr != nil {
+		t.Fatal(closeErr)
+	}
+	r, err := ParseFile(testSource("mmdb"), path, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(r.Records) != 1 || r.Rejected != 0 || r.NoCountry != 1 {
+		t.Fatalf("unexpected metadata handling: %+v", r)
+	}
 }
 
 func writeTemp(t *testing.T, name string, data []byte) string {

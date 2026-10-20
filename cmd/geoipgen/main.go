@@ -16,7 +16,6 @@ import (
 	"github.com/txyyddss/ip2country/internal/config"
 	"github.com/txyyddss/ip2country/internal/consensus"
 	"github.com/txyyddss/ip2country/internal/fetch"
-	"github.com/txyyddss/ip2country/internal/iprange"
 	"github.com/txyyddss/ip2country/internal/model"
 	"github.com/txyyddss/ip2country/internal/output"
 	"github.com/txyyddss/ip2country/internal/parser"
@@ -93,7 +92,6 @@ func build(configPath, workDir, outDir, readmePath, singBoxBinary string, offlin
 		}
 	}()
 	var inputRecords int64
-	consensusFilter := iprange.NewPrefixFilter(filters)
 	for order, source := range cfg.Sources {
 		if source.Role != "country" {
 			continue
@@ -108,13 +106,10 @@ func build(configPath, workDir, outDir, readmePath, singBoxBinary string, offlin
 			return fmt.Errorf("write per-source CSVs: %w", err)
 		}
 		for _, record := range parsed.Records {
-			for _, prefix := range consensusFilter.SubtractPrefix(record.Prefix) {
-				record.Prefix = prefix
-				if err := spool.Write(record); err != nil {
-					return err
-				}
-				inputRecords++
+			if err := spool.Write(record); err != nil {
+				return err
 			}
+			inputRecords++
 		}
 		parsed = parser.Result{}
 		runtime.GC()
@@ -212,6 +207,7 @@ func loadSource(ctx context.Context, source config.Source, order int, cacheDir s
 	status.Bytes = selected.Bytes
 	status.ParsedRows = parsed.Parsed
 	status.RejectedRows = parsed.Rejected
+	status.NoCountryRows = parsed.NoCountry
 	if selected.Fresh {
 		if _, err := fetch.Commit(*selected, source, cacheDir); err != nil {
 			status.Status = "fresh-not-cached"
