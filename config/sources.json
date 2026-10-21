@@ -286,28 +286,6 @@
       ]
     },
     {
-      "id": "ipgeo-csv-v4",
-      "name": "IPGeo IPv4 CSV",
-      "vote_group": "ipgeo",
-      "format": "csv",
-      "urls": [
-        "https://raw.githubusercontent.com/analogic/ipgeo/master/all.ipv4.csv"
-      ],
-      "family": "ipv4",
-      "enabled": true
-    },
-    {
-      "id": "ipgeo-csv-v6",
-      "name": "IPGeo IPv6 CSV",
-      "vote_group": "ipgeo",
-      "format": "csv",
-      "urls": [
-        "https://raw.githubusercontent.com/analogic/ipgeo/master/all.ipv6.csv"
-      ],
-      "family": "ipv6",
-      "enabled": true
-    },
-    {
       "id": "ip-ranges",
       "name": "IPRanges",
       "vote_group": "ip-ranges",
@@ -431,16 +409,6 @@
         "https://github.com/parsamoh/geoip/releases/latest/download/iran-cidr.txt"
       ],
       "country_override": "IR"
-    },
-    {
-      "id": "iplocate-csv-zip",
-      "name": "IPLocate CSV ZIP alternative",
-      "vote_group": "iplocate",
-      "format": "csv-zip",
-      "urls": [
-        "https://raw.githubusercontent.com/iplocate/ip-address-databases/main/ip-to-country/ip-to-country.csv.zip"
-      ],
-      "enabled": true
     },
     {
       "id": "geolite-p3terx",
