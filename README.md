@@ -44,9 +44,9 @@ The GeoIP workflow runs at 00:00 UTC each day and supports `workflow_dispatch`. 
 <!-- GEOIP-STATISTICS:START -->
 ## Generated data status
 
-Last run: `2026-10-21T11:25:48Z`
+Last run: `2026-10-21T11:33:11Z`
 
-Input rows: **38931796** · Published blocks: **1253792**
+Input rows: **38931386** · Published blocks: **1253792**
 
 ### Source availability
 
@@ -79,8 +79,6 @@ Input rows: **38931796** · Published blocks: **1253792**
 | IP2Location Lite via xream MMDB | fresh | 384815 | 1499498 | 0 | 314195 | 13193749 | https://github.com/xream/geoip/releases/latest/download/ip2location.country.mmdb |
 | IPLocate | fresh | 785351 | 1366216 | 0 | 0 | 17219944 | https://github.com/iplocate/ip-address-databases/raw/refs/heads/main/ip-to-country/ip-to-country.mmdb |
 | IPGeo | fresh | 177102 | 69690 | 0 | 0 | 3393649 | https://github.com/analogic/ipgeo/raw/refs/heads/master/ipgeo-country.mmdb |
-| IPGeo IPv4 CSV | skipped-no-usable-copy | 0 | 0 | 0 | 0 | 0 | source produced no country/IP records |
-| IPGeo IPv6 CSV | fresh | 0 | 410 | 68530 | 2009 | 1543195 | https://raw.githubusercontent.com/analogic/ipgeo/master/all.ipv6.csv |
 | IPRanges | fresh | 286757 | 487213 | 0 | 97794 | 40616299 | https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.json |
 | IPRanges country CSV | fresh | 286757 | 487213 | 0 | 98381 | 18365449 | https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.csv |
 | Clang CN | fresh | 4317 | 1676 | 0 | 0 | 97598 | https://ispip.clang.cn/all_cn_ipv46.txt |
@@ -94,7 +92,6 @@ Input rows: **38931796** · Published blocks: **1253792**
 | IP2Region | fresh | 802825 | 0 | 0 | 0 | 11122642 | https://github.com/adysec/IP_database/raw/refs/heads/main/ip2region/ip2region.xdb |
 | gaoyifan China operator IPv4+IPv6 | fresh | 6525 | 3488 | 0 | 0 | 159289 | https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china46.txt |
 | Iran CIDRs by parsamoh | fresh | 1748 | 574 | 0 | 0 | 36004 | https://github.com/parsamoh/geoip/releases/latest/download/iran-cidr.txt |
-| IPLocate CSV ZIP alternative | skipped-no-usable-copy | 0 | 0 | 0 | 0 | 0 | zip: not a valid zip file |
 | GeoLite2 Country via P3TERX | fresh | 565511 | 500934 | 0 | 0 | 3408573 | https://github.com/P3TERX/GeoLite.mmdb/releases/latest/download/GeoLite2-Country.mmdb |
 
 ### Final country coverage
