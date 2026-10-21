@@ -225,7 +225,7 @@
       "urls": [
         "https://github.com/xream/geoip/releases/latest/download/ipinfo.country.mmdb"
       ],
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "ipinfo-lite",
@@ -294,7 +294,7 @@
         "https://raw.githubusercontent.com/analogic/ipgeo/master/all.ipv4.csv"
       ],
       "family": "ipv4",
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "ipgeo-csv-v6",
@@ -305,7 +305,7 @@
         "https://raw.githubusercontent.com/analogic/ipgeo/master/all.ipv6.csv"
       ],
       "family": "ipv6",
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "ip-ranges",
@@ -413,33 +413,6 @@
       ]
     },
     {
-      "id": "v2ray-geoip",
-      "name": "V2ray GeoIP",
-      "vote_group": "v2ray-geoip",
-      "format": "v2ray-dat",
-      "urls": [
-        "https://github.com/v2fly/geoip/releases/latest/download/geoip.dat"
-      ]
-    },
-    {
-      "id": "meta-rules-dat",
-      "name": "Meta Rules Dat",
-      "vote_group": "meta-rules-dat",
-      "format": "mmdb",
-      "urls": [
-        "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country.mmdb"
-      ]
-    },
-    {
-      "id": "geoip-enhanced",
-      "name": "Loyalsoldier GeoIP Enhanced",
-      "vote_group": "geoip-enhanced",
-      "format": "v2ray-dat",
-      "urls": [
-        "https://raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat"
-      ]
-    },
-    {
       "id": "china-operator-46",
       "name": "gaoyifan China operator IPv4+IPv6",
       "vote_group": "geoip-enhanced",
@@ -467,7 +440,7 @@
       "urls": [
         "https://raw.githubusercontent.com/iplocate/ip-address-databases/main/ip-to-country/ip-to-country.csv.zip"
       ],
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "geolite-p3terx",
@@ -478,37 +451,6 @@
         "https://github.com/P3TERX/GeoLite.mmdb/releases/latest/download/GeoLite2-Country.mmdb"
       ],
       "enabled": true
-    },
-    {
-      "id": "geoip-aio-xos",
-      "name": "GeoIP All-in-One consensus MMDB",
-      "vote_group": "geoip-aio-xos",
-      "format": "mmdb",
-      "urls": [
-        "https://github.com/xOS/geoip-all-in-one/releases/latest/download/Country.mmdb"
-      ],
-      "enabled": false
-    },
-    {
-      "id": "geoip-laincat",
-      "name": "laincat GeoIP MMDB",
-      "vote_group": "geoip-laincat",
-      "format": "mmdb",
-      "urls": [
-        "https://github.com/laincat/GeoIP/releases/latest/download/Country.mmdb"
-      ],
-      "enabled": false
-    },
-    {
-      "id": "china-17mon",
-      "name": "17mon China CIDRs (stale backup)",
-      "vote_group": "china-17mon",
-      "format": "txt",
-      "urls": [
-        "https://raw.githubusercontent.com/17mon/china_ip_list/master/china_ip_list.txt"
-      ],
-      "country_override": "CN",
-      "enabled": false
     }
   ]
 }
