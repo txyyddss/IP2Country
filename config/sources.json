@@ -15,7 +15,8 @@
       "urls": [
         "https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/dbip-country/dbip-country-ipv4.csv"
       ],
-      "family": "ipv4"
+      "family": "ipv4",
+      "evidence_class": "geolocation"
     },
     {
       "id": "dbip-sapics-v6",
@@ -25,7 +26,8 @@
       "urls": [
         "https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/dbip-country/dbip-country-ipv6.csv"
       ],
-      "family": "ipv6"
+      "family": "ipv6",
+      "evidence_class": "geolocation"
     },
     {
       "id": "dbip-tdulcet-v4",
@@ -36,7 +38,8 @@
         "https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/dbip-country/ipv4.tsv?inline=false"
       ],
       "family": "ipv4",
-      "ip_encoding": "hex"
+      "ip_encoding": "hex",
+      "evidence_class": "geolocation"
     },
     {
       "id": "dbip-tdulcet-v6",
@@ -47,7 +50,8 @@
         "https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/dbip-country/ipv6.tsv?inline=false"
       ],
       "family": "ipv6",
-      "ip_encoding": "hex"
+      "ip_encoding": "hex",
+      "evidence_class": "geolocation"
     },
     {
       "id": "geolite-sapics-v4",
@@ -57,7 +61,8 @@
       "urls": [
         "https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/geolite2-country/geolite2-country-ipv4.csv"
       ],
-      "family": "ipv4"
+      "family": "ipv4",
+      "evidence_class": "geolocation"
     },
     {
       "id": "geolite-sapics-v6",
@@ -67,7 +72,8 @@
       "urls": [
         "https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/geolite2-country/geolite2-country-ipv6.csv"
       ],
-      "family": "ipv6"
+      "family": "ipv6",
+      "evidence_class": "geolocation"
     },
     {
       "id": "geolite-tdulcet-v4",
@@ -78,7 +84,8 @@
         "https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geolite2-country/ipv4.tsv?inline=false"
       ],
       "family": "ipv4",
-      "ip_encoding": "hex"
+      "ip_encoding": "hex",
+      "evidence_class": "geolocation"
     },
     {
       "id": "geolite-tdulcet-v6",
@@ -89,69 +96,76 @@
         "https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geolite2-country/ipv6.tsv?inline=false"
       ],
       "family": "ipv6",
-      "ip_encoding": "hex"
+      "ip_encoding": "hex",
+      "evidence_class": "geolocation"
     },
     {
       "id": "server-country-sapics-v4",
       "name": "Server-Country via sapics IPv4",
-      "vote_group": "server-country-sapics",
+      "vote_group": "sapics-country",
       "format": "csv",
       "urls": [
         "https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/server-country/server-country-ipv4.csv"
       ],
-      "family": "ipv4"
+      "family": "ipv4",
+      "evidence_class": "fallback"
     },
     {
       "id": "server-country-sapics-v6",
       "name": "Server-Country via sapics IPv6",
-      "vote_group": "server-country-sapics",
+      "vote_group": "sapics-country",
       "format": "csv",
       "urls": [
         "https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/server-country/server-country-ipv6.csv"
       ],
-      "family": "ipv6"
+      "family": "ipv6",
+      "evidence_class": "fallback"
     },
     {
       "id": "geo-whois-v4",
       "name": "Geo-Whois-ASN-Country IPv4",
-      "vote_group": "geo-whois-asn",
+      "vote_group": "sapics-country",
       "format": "tsv",
       "urls": [
         "https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geo-whois-asn-country/ipv4.tsv?inline=false"
       ],
       "family": "ipv4",
-      "ip_encoding": "hex"
+      "ip_encoding": "hex",
+      "evidence_class": "fallback"
     },
     {
       "id": "geo-whois-v6",
       "name": "Geo-Whois-ASN-Country IPv6",
-      "vote_group": "geo-whois-asn",
+      "vote_group": "sapics-country",
       "format": "tsv",
       "urls": [
         "https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geo-whois-asn-country/ipv6.tsv?inline=false"
       ],
       "family": "ipv6",
-      "ip_encoding": "hex"
+      "ip_encoding": "hex",
+      "evidence_class": "fallback"
     },
     {
       "id": "user-country-v4",
       "name": "User-Country IPv4",
-      "vote_group": "user-country",
+      "vote_group": "sapics-country",
       "format": "csv",
       "urls": [
         "https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/user-country/user-country-ipv4.csv"
       ],
-      "family": "ipv4"
+      "family": "ipv4",
+      "evidence_class": "fallback"
     },
     {
       "id": "user-country-v6",
       "name": "User-Country IPv6",
-      "vote_group": "user-country",
+      "vote_group": "sapics-country",
       "format": "csv",
       "urls": [
         "https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/user-country/user-country-ipv6.csv"
       ],
-      "family": "ipv6"
+      "family": "ipv6",
+      "evidence_class": "fallback"
     },
     {
       "id": "iptoasn-v4",
@@ -162,7 +176,8 @@
         "https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/iptoasn-country/ipv4.tsv?inline=false"
       ],
       "family": "ipv4",
-      "ip_encoding": "hex"
+      "ip_encoding": "hex",
+      "evidence_class": "fallback"
     },
     {
       "id": "iptoasn-v6",
@@ -173,7 +188,8 @@
         "https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/iptoasn-country/ipv6.tsv?inline=false"
       ],
       "family": "ipv6",
-      "ip_encoding": "hex"
+      "ip_encoding": "hex",
+      "evidence_class": "fallback"
     },
     {
       "id": "iptoasn-sapics-v4",
@@ -183,7 +199,8 @@
       "urls": [
         "https://github.com/sapics/ip-location-db/releases/download/latest/iptoasn-country-ipv4.csv"
       ],
-      "family": "ipv4"
+      "family": "ipv4",
+      "evidence_class": "fallback"
     },
     {
       "id": "iptoasn-sapics-v6",
@@ -193,7 +210,8 @@
       "urls": [
         "https://github.com/sapics/ip-location-db/releases/download/latest/iptoasn-country-ipv6.csv"
       ],
-      "family": "ipv6"
+      "family": "ipv6",
+      "evidence_class": "fallback"
     },
     {
       "id": "ipinfo-tdulcet-v4",
@@ -204,7 +222,8 @@
         "https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/ipinfo-country/ipv4.tsv?inline=false"
       ],
       "family": "ipv4",
-      "ip_encoding": "hex"
+      "ip_encoding": "hex",
+      "evidence_class": "geolocation"
     },
     {
       "id": "ipinfo-tdulcet-v6",
@@ -215,7 +234,8 @@
         "https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/ipinfo-country/ipv6.tsv?inline=false"
       ],
       "family": "ipv6",
-      "ip_encoding": "hex"
+      "ip_encoding": "hex",
+      "evidence_class": "geolocation"
     },
     {
       "id": "ipinfo-xream",
@@ -225,7 +245,8 @@
       "urls": [
         "https://github.com/xream/geoip/releases/latest/download/ipinfo.country.mmdb"
       ],
-      "enabled": true
+      "enabled": true,
+      "evidence_class": "geolocation"
     },
     {
       "id": "ipinfo-lite",
@@ -234,7 +255,8 @@
       "format": "csv",
       "urls": [
         "https://github.com/alice39s/ipinfo-csv-lite/releases/latest/download/ipinfo-lite.csv"
-      ]
+      ],
+      "evidence_class": "geolocation"
     },
     {
       "id": "ip2location-v4",
@@ -245,7 +267,8 @@
         "https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/ip2location-country/ipv4.tsv?inline=false"
       ],
       "family": "ipv4",
-      "ip_encoding": "hex"
+      "ip_encoding": "hex",
+      "evidence_class": "geolocation"
     },
     {
       "id": "ip2location-v6",
@@ -256,7 +279,8 @@
         "https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/ip2location-country/ipv6.tsv?inline=false"
       ],
       "family": "ipv6",
-      "ip_encoding": "hex"
+      "ip_encoding": "hex",
+      "evidence_class": "geolocation"
     },
     {
       "id": "ip2location-xream",
@@ -265,7 +289,8 @@
       "format": "mmdb",
       "urls": [
         "https://github.com/xream/geoip/releases/latest/download/ip2location.country.mmdb"
-      ]
+      ],
+      "evidence_class": "geolocation"
     },
     {
       "id": "iplocate",
@@ -274,7 +299,8 @@
       "format": "mmdb",
       "urls": [
         "https://github.com/iplocate/ip-address-databases/raw/refs/heads/main/ip-to-country/ip-to-country.mmdb"
-      ]
+      ],
+      "evidence_class": "geolocation"
     },
     {
       "id": "ipgeo",
@@ -283,7 +309,8 @@
       "format": "mmdb",
       "urls": [
         "https://github.com/analogic/ipgeo/raw/refs/heads/master/ipgeo-country.mmdb"
-      ]
+      ],
+      "evidence_class": "fallback"
     },
     {
       "id": "ip-ranges",
@@ -292,7 +319,8 @@
       "format": "json",
       "urls": [
         "https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.json"
-      ]
+      ],
+      "evidence_class": "fallback"
     },
     {
       "id": "hexydec-csv",
@@ -303,7 +331,8 @@
         "https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.csv"
       ],
       "cidr_column": "1",
-      "country_column": "0"
+      "country_column": "0",
+      "evidence_class": "fallback"
     },
     {
       "id": "clang-cn",
@@ -313,7 +342,8 @@
       "urls": [
         "https://ispip.clang.cn/all_cn_ipv46.txt"
       ],
-      "country_override": "CN"
+      "country_override": "CN",
+      "evidence_class": "fallback"
     },
     {
       "id": "chnroutes2",
@@ -323,7 +353,8 @@
       "urls": [
         "https://github.com/misakaio/chnroutes2/raw/refs/heads/master/chnroutes.mmdb"
       ],
-      "country_override": "CN"
+      "country_override": "CN",
+      "evidence_class": "fallback"
     },
     {
       "id": "sypex-country",
@@ -332,7 +363,8 @@
       "format": "sxgeo-zip",
       "urls": [
         "https://sypexgeo.net/files/SxGeoCountry.zip"
-      ]
+      ],
+      "evidence_class": "geolocation"
     },
     {
       "id": "ip66",
@@ -341,7 +373,8 @@
       "format": "mmdb",
       "urls": [
         "https://downloads.ip66.dev/db/ip66.mmdb"
-      ]
+      ],
+      "evidence_class": "fallback"
     },
     {
       "id": "iana-global-blocks",
@@ -350,16 +383,18 @@
       "format": "json",
       "urls": [
         "https://raw.githubusercontent.com/HotCakeX/Official-IANA-IP-blocks/refs/heads/main/JSON/global.json"
-      ]
+      ],
+      "evidence_class": "fallback"
     },
     {
       "id": "ip-geolocation-db",
       "name": "IP-Geolocation-DB",
-      "vote_group": "ip-geolocation-db",
+      "vote_group": "sapics-country",
       "format": "mmdb",
       "urls": [
         "https://github.com/HostByBelle/IP-Geolocation-DB/releases/latest/download/cc0-pddl-country-asn-both-variant-1.mmdb"
-      ]
+      ],
+      "evidence_class": "fallback"
     },
     {
       "id": "ipapi-v4",
@@ -369,7 +404,8 @@
       "urls": [
         "https://ipapi.is/data/geolocationDatabaseIPv4.csv.zip"
       ],
-      "family": "ipv4"
+      "family": "ipv4",
+      "evidence_class": "geolocation"
     },
     {
       "id": "ipapi-v6",
@@ -379,7 +415,8 @@
       "urls": [
         "https://ipapi.is/data/geolocationDatabaseIPv6.csv.zip"
       ],
-      "family": "ipv6"
+      "family": "ipv6",
+      "evidence_class": "geolocation"
     },
     {
       "id": "ip2region",
@@ -388,17 +425,19 @@
       "format": "ip2region-xdb",
       "urls": [
         "https://github.com/adysec/IP_database/raw/refs/heads/main/ip2region/ip2region.xdb"
-      ]
+      ],
+      "evidence_class": "fallback"
     },
     {
       "id": "china-operator-46",
       "name": "gaoyifan China operator IPv4+IPv6",
-      "vote_group": "geoip-enhanced",
+      "vote_group": "geolite",
       "format": "txt",
       "urls": [
         "https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china46.txt"
       ],
-      "country_override": "CN"
+      "country_override": "CN",
+      "evidence_class": "fallback"
     },
     {
       "id": "iran-parsamoh",
@@ -408,7 +447,8 @@
       "urls": [
         "https://github.com/parsamoh/geoip/releases/latest/download/iran-cidr.txt"
       ],
-      "country_override": "IR"
+      "country_override": "IR",
+      "evidence_class": "fallback"
     },
     {
       "id": "geolite-p3terx",
@@ -418,7 +458,30 @@
       "urls": [
         "https://github.com/P3TERX/GeoLite.mmdb/releases/latest/download/GeoLite2-Country.mmdb"
       ],
-      "enabled": true
+      "enabled": true,
+      "evidence_class": "geolocation"
+    }
+  ],
+  "overrides": [
+    {
+      "cidr": "119.28.225.0/24",
+      "country": "HK",
+      "reason": "Manually confirmed Hong Kong range"
+    },
+    {
+      "cidr": "47.243.107.0/24",
+      "country": "HK",
+      "reason": "Manually confirmed Hong Kong range"
+    },
+    {
+      "cidr": "8.217.174.0/24",
+      "country": "HK",
+      "reason": "Manually confirmed Hong Kong range"
+    },
+    {
+      "cidr": "47.242.137.0/24",
+      "country": "HK",
+      "reason": "Manually confirmed Hong Kong range"
     }
   ]
 }

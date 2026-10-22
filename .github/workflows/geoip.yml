@@ -47,27 +47,10 @@ jobs:
         with:
           path: .cache/geoip/cache
           key: geoip-sources-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
-      - name: Publish dated release
+      - name: Publish verified release and prune older GeoIP releases
         env:
           GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          tag="geoip-$(date -u +%Y%m%d)"
-          assets=(
-            dist/geoip.dat
-            dist/country.mmdb
-            dist/country-csv.zip
-            dist/source-csv.zip
-            dist/sing-box-rulesets.zip
-            dist/run-summary.json
-            dist/manifest.json
-            dist/SHA256SUMS
-          )
-          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload "$tag" "${assets[@]}" --clobber --repo "$GITHUB_REPOSITORY"
-          else
-            gh release create "$tag" "${assets[@]}" --title "$tag" --notes "Daily country GeoIP generation. See run-summary.json and SHA256SUMS for source status and integrity hashes." --repo "$GITHUB_REPOSITORY"
-          fi
+        run: python3 scripts/publish_release.py
       - name: Commit refreshed README statistics
         if: always()
         shell: bash

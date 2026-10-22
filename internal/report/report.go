@@ -18,8 +18,16 @@ import (
 const startMarker = "<!-- GEOIP-STATISTICS:START -->"
 const endMarker = "<!-- GEOIP-STATISTICS:END -->"
 
-func BuildSummary(sources []model.SourceStatus, blocks []consensus.Block, inputRecords int64) model.RunSummary {
+func BuildSummary(sources []model.SourceStatus, blocks []consensus.Block, inputRecords int64, overrides ...model.Override) model.RunSummary {
 	summary := model.RunSummary{GeneratedAt: timeNowUTC(), Sources: sources, InputRecords: inputRecords, OutputBlocks: int64(len(blocks))}
+	summary.Overrides = make([]model.OverrideStatus, len(overrides))
+	summary.EvidenceCoverage = make(map[string]model.CoverageStats)
+	for _, method := range []model.EvidenceClass{model.Geolocation, model.Fallback, model.Manual} {
+		summary.EvidenceCoverage[method.String()] = emptyCoverage()
+	}
+	for i, override := range overrides {
+		summary.Overrides[i] = model.OverrideStatus{Override: override, Applied: emptyCoverage()}
+	}
 	stats := make(map[string]*model.CountryStats)
 	weight := make(map[string]*big.Rat)
 	confidence := make(map[string]*big.Rat)
@@ -27,6 +35,12 @@ func BuildSummary(sources []model.SourceStatus, blocks []consensus.Block, inputR
 	for _, b := range blocks {
 		if !b.Prefix.IsValid() {
 			continue
+		}
+		coverage := summary.EvidenceCoverage[b.Method.String()]
+		addCoverage(&coverage, b.Prefix)
+		summary.EvidenceCoverage[b.Method.String()] = coverage
+		if b.Method == model.Manual && b.OverrideIndex >= 0 && b.OverrideIndex < len(summary.Overrides) {
+			addCoverage(&summary.Overrides[b.OverrideIndex].Applied, b.Prefix)
 		}
 		s := stats[b.Country]
 		if s == nil {
@@ -51,7 +65,7 @@ func BuildSummary(sources []model.SourceStatus, blocks []consensus.Block, inputR
 		}
 		addresses := addressWeight(b.Prefix)
 		conf := new(big.Rat).SetFloat64(b.Confidence / 100)
-		if conf != nil {
+		if conf != nil && b.Method != model.Manual {
 			confidence[b.Country].Add(confidence[b.Country], new(big.Rat).Mul(addresses, conf))
 			weight[b.Country].Add(weight[b.Country], addresses)
 		}
@@ -67,6 +81,26 @@ func BuildSummary(sources []model.SourceStatus, blocks []consensus.Block, inputR
 	}
 	sort.Slice(summary.Countries, func(i, j int) bool { return summary.Countries[i].Country < summary.Countries[j].Country })
 	return summary
+}
+
+func emptyCoverage() model.CoverageStats {
+	return model.CoverageStats{IPv4Addresses: "0", IPv6Addresses: "0"}
+}
+
+func addCoverage(c *model.CoverageStats, p netip.Prefix) {
+	addresses := &c.IPv4Addresses
+	if p.Addr().Is4() {
+		c.IPv4Blocks++
+	} else {
+		c.IPv6Blocks++
+		addresses = &c.IPv6Addresses
+	}
+	n, ok := new(big.Int).SetString(*addresses, 10)
+	if !ok {
+		n = new(big.Int)
+	}
+	n.Add(n, addressWeight(p).Num())
+	*addresses = n.String()
 }
 
 func WriteJSON(path string, summary model.RunSummary) error {
@@ -114,6 +148,19 @@ func render(summary model.RunSummary) string {
 		details = strings.ReplaceAll(details, "|", "\\|")
 		fmt.Fprintf(&b, "| %s | %s | %d | %d | %d | %d | %d | %s |\n", s.Name, s.Status, s.IPv4Records, s.IPv6Records, s.RejectedRows, s.NoCountryRows, s.Bytes, details)
 	}
+	b.WriteString("\n### Assignment evidence\n\n| Method | IPv4 blocks | IPv4 addresses | IPv6 blocks | IPv6 addresses |\n|---|---:|---:|---:|---:|\n")
+	for _, method := range []string{"geolocation", "fallback", "manual"} {
+		c := summary.EvidenceCoverage[method]
+		fmt.Fprintf(&b, "| %s | %d | %s | %d | %s |\n", method, c.IPv4Blocks, c.IPv4Addresses, c.IPv6Blocks, c.IPv6Addresses)
+	}
+	if len(summary.Overrides) > 0 {
+		b.WriteString("\n### Manual overrides\n\n| Network | Country | Applied IPv4 addresses | Applied IPv6 addresses | Reason |\n|---|---|---:|---:|---|\n")
+		for _, o := range summary.Overrides {
+			reason := strings.ReplaceAll(strings.Join(strings.Fields(o.Reason), " "), "|", "\\|")
+			fmt.Fprintf(&b, "| %s | %s | %s | %s | %s |\n", o.CIDR, o.Country, o.Applied.IPv4Addresses, o.Applied.IPv6Addresses, reason)
+		}
+	}
+	b.WriteString("\nConfidence measures agreement among participating provider groups, not measured geolocation accuracy. Manual assignments are excluded from confidence averages.\n")
 	b.WriteString("\n### Final country coverage\n\n| Country | IPv4 blocks | IPv4 /24 units | IPv6 blocks | IPv6 /64 units | Average confidence |\n|---|---:|---:|---:|---:|---:|\n")
 	for _, c := range summary.Countries {
 		fmt.Fprintf(&b, "| %s | %d | %s | %d | %s | %s |\n", c.Country, c.IPv4Blocks, roundedUnits(c.IPv4Cells), c.IPv6Blocks, roundedUnits(c.IPv6Cells), c.AverageConf)

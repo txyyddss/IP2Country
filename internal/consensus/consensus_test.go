@@ -183,9 +183,9 @@ func TestSpecialUseExclusionsAreSubtractedPrecisely(t *testing.T) {
 	}
 }
 
-func resolveBoth(t *testing.T, records []model.Record, ranks map[string]int, exclusions []netip.Prefix) []Block {
+func resolveBoth(t *testing.T, records []model.Record, ranks map[string]int, exclusions []netip.Prefix, overrides ...model.Override) []Block {
 	t.Helper()
-	got, err := Resolve(records, ranks, exclusions)
+	got, err := Resolve(records, ranks, exclusions, overrides...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -209,7 +209,7 @@ func resolveBoth(t *testing.T, records []model.Record, ranks map[string]int, exc
 	if err := spool.Close(); err != nil {
 		t.Fatal(err)
 	}
-	disk, err := ResolveSpool(path, groups, ranks, exclusions)
+	disk, err := ResolveSpool(path, groups, ranks, exclusions, overrides...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -277,6 +277,9 @@ func TestVotingMatchesPerAddressOracle(t *testing.T) {
 				group := []string{"a", "b", "c"}[rng.IntN(3)]
 				r := rec(netip.PrefixFrom(address, bits).Masked().String(), []string{"US", "JP", "DE"}[rng.IntN(3)], group, rng.IntN(4))
 				r.RowOrder = row
+				if trial%2 == 1 && rng.IntN(2) == 0 {
+					r.Evidence = model.Fallback
+				}
 				records = append(records, r)
 			}
 			ranks := map[string]int{"a": 0, "b": 1, "c": 2}
@@ -292,13 +295,25 @@ func TestVotingMatchesPerAddressOracle(t *testing.T) {
 				for _, r := range records {
 					if r.Prefix.Contains(address) {
 						old, ok := chosen[r.VoteGroup]
-						if !ok || r.Prefix.Bits() > old.Prefix.Bits() || r.Prefix.Bits() == old.Prefix.Bits() && (r.Order < old.Order || r.Order == old.Order && r.RowOrder < old.RowOrder) {
+						stronger := r.Evidence.Priority() < old.Evidence.Priority()
+						moreSpecific := r.Prefix.Bits() > old.Prefix.Bits()
+						earlier := r.Prefix.Bits() == old.Prefix.Bits() && (r.Order < old.Order || r.Order == old.Order && r.RowOrder < old.RowOrder)
+						if !ok || stronger || r.Evidence == old.Evidence && (moreSpecific || earlier) {
 							chosen[r.VoteGroup] = r
 						}
 					}
 				}
 				votes, first := map[string]int{}, map[string]int{}
+				method := model.Fallback
+				for _, r := range chosen {
+					if r.Evidence == model.Geolocation {
+						method = model.Geolocation
+					}
+				}
 				for g, r := range chosen {
+					if r.Evidence != method {
+						continue
+					}
 					votes[r.Country]++
 					old, ok := first[r.Country]
 					if !ok || ranks[g] < old {
@@ -316,6 +331,9 @@ func TestVotingMatchesPerAddressOracle(t *testing.T) {
 				matches := 0
 				for _, b := range got {
 					if b.Prefix.Contains(address) {
+						if b.Method != method {
+							t.Fatalf("wrong evidence for %s: %s want %s", address, b.Method, method)
+						}
 						actual = b.Country
 						matches++
 					}

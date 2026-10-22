@@ -26,9 +26,17 @@ jobs:
             echo "$unformatted"
             exit 1
           fi
+      - name: Install pinned sing-box for integration tests
+        env:
+          GOBIN: ${{ runner.temp }}/geoip-bin
+        run: go install github.com/sagernet/sing-box/cmd/sing-box@v1.14.0
       - name: Test
+        env:
+          SING_BOX_BIN: ${{ runner.temp }}/geoip-bin/sing-box
         run: go test ./...
       - name: Vet
         run: go vet ./...
       - name: Build
         run: go build ./cmd/geoipgen
+      - name: Test release publication and retention
+        run: python3 -m unittest discover -s scripts -p 'test_*.py' -v

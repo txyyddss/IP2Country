@@ -15,11 +15,12 @@ import (
 	"github.com/txyyddss/ip2country/internal/model"
 )
 
-const eventSize = 32
+const eventSize = 33
 const eventChunkLimit = 250_000
 
 // Events are sorted at exact address boundaries, including sub-/24 and sub-/64 prefixes.
 type sortEvent struct {
+	evidence       model.EvidenceClass
 	ipv6           bool
 	at             position
 	bits           uint8
@@ -98,6 +99,9 @@ func lessEvent(a, b sortEvent) bool {
 	if a.group != b.group {
 		return a.group < b.group
 	}
+	if a.evidence != b.evidence {
+		return a.evidence < b.evidence
+	}
 	if a.bits != b.bits {
 		return a.bits < b.bits
 	}
@@ -126,10 +130,14 @@ func encodeEvent(b []byte, e sortEvent) {
 	binary.LittleEndian.PutUint16(b[21:23], e.country)
 	binary.LittleEndian.PutUint64(b[23:31], e.order)
 	b[31] = byte(e.delta)
+	b[32] = byte(e.evidence)
 }
 
 func decodeEvent(b []byte) (sortEvent, error) {
-	e := sortEvent{ipv6: b[0] == 6, bits: b[1], at: position{hi: binary.LittleEndian.Uint64(b[2:10]), lo: binary.LittleEndian.Uint64(b[10:18]), afterMax: b[18] != 0}, group: binary.LittleEndian.Uint16(b[19:21]), country: binary.LittleEndian.Uint16(b[21:23]), order: binary.LittleEndian.Uint64(b[23:31]), delta: int8(b[31])}
+	e := sortEvent{ipv6: b[0] == 6, bits: b[1], at: position{hi: binary.LittleEndian.Uint64(b[2:10]), lo: binary.LittleEndian.Uint64(b[10:18]), afterMax: b[18] != 0}, group: binary.LittleEndian.Uint16(b[19:21]), country: binary.LittleEndian.Uint16(b[21:23]), order: binary.LittleEndian.Uint64(b[23:31]), delta: int8(b[31]), evidence: model.EvidenceClass(b[32])}
+	if e.evidence > model.Manual {
+		return e, fmt.Errorf("invalid event evidence class %d", e.evidence)
+	}
 	if b[0] != 4 && b[0] != 6 {
 		return e, fmt.Errorf("invalid event address family %d", b[0])
 	}
@@ -239,7 +247,7 @@ func (m *eventMerge) close() {
 	m.heap = nil
 }
 
-func ResolveSpool(path string, groups []string, groupOrder map[string]int, exclusions []netip.Prefix) ([]Block, error) {
+func ResolveSpool(path string, groups []string, groupOrder map[string]int, exclusions []netip.Prefix, overrides ...model.Override) ([]Block, error) {
 	tempDir, err := os.MkdirTemp(filepath.Dir(path), "ip2country-events-")
 	if err != nil {
 		return nil, err
@@ -248,6 +256,21 @@ func ResolveSpool(path string, groups []string, groupOrder map[string]int, exclu
 	sorter := newEventSorter(tempDir)
 	if err := spoolToEvents(path, groups, sorter); err != nil {
 		return nil, err
+	}
+	if len(sorter.chunk) == 0 && len(sorter.files) == 0 {
+		return nil, fmt.Errorf("no vote ranges after normalization")
+	}
+	for i, override := range overrides {
+		a, b, err := overrideEvents(override, i)
+		if err != nil {
+			return nil, err
+		}
+		if err := sorter.add(a); err != nil {
+			return nil, err
+		}
+		if err := sorter.add(b); err != nil {
+			return nil, err
+		}
 	}
 	if err := sorter.flush(); err != nil {
 		return nil, err
@@ -297,9 +320,12 @@ func spoolToEvents(path string, groups []string, sorter *eventSorter) error {
 		if _, err := io.ReadFull(r, raw[:addrLen]); err != nil {
 			return err
 		}
-		var tail [10]byte
+		var tail [11]byte
 		if _, err := io.ReadFull(r, tail[:]); err != nil {
 			return err
+		}
+		if model.EvidenceClass(tail[10]) > model.Fallback {
+			return fmt.Errorf("invalid spooled evidence class %d", tail[10])
 		}
 		group := binary.LittleEndian.Uint16(tail[2:4])
 		if group == 0 || int(group) >= len(groups) {
@@ -309,7 +335,7 @@ func spoolToEvents(path string, groups []string, sorter *eventSorter) error {
 		if int(bits) > addr.BitLen() {
 			return fmt.Errorf("invalid spooled prefix length %d", bits)
 		}
-		record := model.Record{Prefix: netip.PrefixFrom(addr, int(bits)), Country: string(tail[:2]), Order: int(binary.LittleEndian.Uint16(tail[4:6])), RowOrder: int(binary.LittleEndian.Uint32(tail[6:10]))}
+		record := model.Record{Evidence: model.EvidenceClass(tail[10]), Prefix: netip.PrefixFrom(addr, int(bits)), Country: string(tail[:2]), Order: int(binary.LittleEndian.Uint16(tail[4:6])), RowOrder: int(binary.LittleEndian.Uint32(tail[6:10]))}
 		start, end := recordEvents(record, group)
 		if err := sorter.add(start); err != nil {
 			return err

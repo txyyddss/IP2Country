@@ -57,6 +57,9 @@ func build(configPath, workDir, outDir, readmePath, singBoxBinary string, offlin
 			continue
 		}
 		if _, ok := groupIDs[source.VoteGroup]; !ok {
+			if len(groupNames) > 65535 {
+				return fmt.Errorf("too many vote groups")
+			}
 			groupIDs[source.VoteGroup] = uint16(len(groupNames))
 			groupNames = append(groupNames, source.VoteGroup)
 			groupOrder[source.VoteGroup] = order
@@ -122,13 +125,13 @@ func build(configPath, workDir, outDir, readmePath, singBoxBinary string, offlin
 	}
 	spoolClosed = true
 	if inputRecords == 0 {
-		summary := report.BuildSummary(statuses, nil, 0)
+		summary := report.BuildSummary(statuses, nil, 0, cfg.Overrides...)
 		_ = report.WriteJSON(filepath.Join(outDir, "run-summary.json"), summary)
 		_ = report.WriteJSON(filepath.Join(outDir, "manifest.json"), summary)
 		_ = report.UpdateREADME(readmePath, summary)
 		return fmt.Errorf("no country source produced usable IP data; see run-summary.json")
 	}
-	blocks, err := consensus.ResolveSpool(spoolPath, groupNames, groupOrder, filters)
+	blocks, err := consensus.ResolveSpool(spoolPath, groupNames, groupOrder, filters, cfg.Overrides...)
 	_ = os.Remove(spoolPath)
 	if err != nil {
 		return err
@@ -149,7 +152,7 @@ func build(configPath, workDir, outDir, readmePath, singBoxBinary string, offlin
 		return err
 	}
 
-	summary := report.BuildSummary(statuses, blocks, inputRecords)
+	summary := report.BuildSummary(statuses, blocks, inputRecords, cfg.Overrides...)
 	if err := report.WriteJSON(filepath.Join(outDir, "run-summary.json"), summary); err != nil {
 		return err
 	}
@@ -167,7 +170,7 @@ func build(configPath, workDir, outDir, readmePath, singBoxBinary string, offlin
 }
 
 func loadSource(ctx context.Context, source config.Source, order int, cacheDir string, offline bool) (model.SourceStatus, parser.Result) {
-	status := model.SourceStatus{ID: source.ID, Name: source.Name, Status: "skipped"}
+	status := model.SourceStatus{ID: source.ID, Name: source.Name, EvidenceClass: source.Evidence().String(), Status: "skipped"}
 	if source.Enabled != nil && !*source.Enabled {
 		status.Status = "disabled"
 		return status, parser.Result{}

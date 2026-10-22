@@ -13,11 +13,13 @@ import (
 )
 
 type Block struct {
-	Prefix      netip.Prefix
-	Country     string
-	Confidence  float64
-	WinnerVotes *big.Int
-	TotalVotes  *big.Int
+	Method        model.EvidenceClass
+	OverrideIndex int
+	Prefix        netip.Prefix
+	Country       string
+	Confidence    float64
+	WinnerVotes   *big.Int
+	TotalVotes    *big.Int
 }
 
 // position is an exact address boundary, including the exclusive end of /0.
@@ -81,14 +83,14 @@ func addressSpan(a, b position, ipv6 bool) *big.Int {
 
 func recordEvents(r model.Record, group uint16) (sortEvent, sortEvent) {
 	p := r.Prefix.Masked()
-	e := sortEvent{ipv6: p.Addr().Is6(), at: addressPosition(p.Addr()), bits: uint8(p.Bits()), group: group,
+	e := sortEvent{ipv6: p.Addr().Is6(), at: addressPosition(p.Addr()), bits: uint8(p.Bits()), group: group, evidence: r.Evidence,
 		country: binary.BigEndian.Uint16([]byte(r.Country)), order: uint64(r.Order)<<32 | uint64(uint32(r.RowOrder)), delta: 1}
 	end := e
 	end.at, end.delta = endPosition(p), -1
 	return e, end
 }
 
-func Resolve(records []model.Record, groupOrder map[string]int, exclusions []netip.Prefix) ([]Block, error) {
+func Resolve(records []model.Record, groupOrder map[string]int, exclusions []netip.Prefix, overrides ...model.Override) ([]Block, error) {
 	groups := []string{""}
 	ids := make(map[string]uint16)
 	var events []sortEvent
@@ -111,6 +113,13 @@ func Resolve(records []model.Record, groupOrder map[string]int, exclusions []net
 	if len(events) == 0 {
 		return nil, fmt.Errorf("no vote ranges after normalization")
 	}
+	for i, override := range overrides {
+		a, b, err := overrideEvents(override, i)
+		if err != nil {
+			return nil, err
+		}
+		events = append(events, a, b)
+	}
 	sort.Slice(events, func(i, j int) bool { return lessEvent(events[i], events[j]) })
 	return sweepEvents(&memoryEvents{events: events}, groups, groupOrder, exclusions)
 }
@@ -129,12 +138,13 @@ func (m *memoryEvents) next() (sortEvent, bool, error) {
 	return e, true, nil
 }
 
-// Each group selects its most specific active assignment. Duplicate rows and
-// mirrors never increase its vote; equal prefixes follow source and row order.
+// Each group selects its strongest evidence, then most specific assignment.
+// Mirrors never add votes; equal prefixes follow source and row order.
 type assignmentKey struct {
-	bits    uint8
-	country uint16
-	order   uint64
+	evidence model.EvidenceClass
+	bits     uint8
+	country  uint16
+	order    uint64
 }
 type assignment struct {
 	key          assignmentKey
@@ -145,6 +155,9 @@ type assignmentHeap []*assignment
 func (h assignmentHeap) Len() int { return len(h) }
 func (h assignmentHeap) Less(i, j int) bool {
 	a, b := h[i].key, h[j].key
+	if a.evidence != b.evidence {
+		return a.evidence.Priority() < b.evidence.Priority()
+	}
 	if a.bits != b.bits {
 		return a.bits > b.bits
 	}
@@ -168,22 +181,28 @@ type groupVotes struct {
 	heap        assignmentHeap
 }
 
-func (g *groupVotes) country() uint16 {
+type voteKey struct {
+	country  uint16
+	evidence model.EvidenceClass
+}
+
+func (g *groupVotes) vote() voteKey {
 	if len(g.heap) == 0 {
-		return 0
+		return voteKey{}
 	}
-	return g.heap[0].key.country
+	k := g.heap[0].key
+	return voteKey{country: k.country, evidence: k.evidence}
 }
 
 type votingState struct {
 	groups     map[uint16]*groupVotes
-	votes      map[uint16]int
-	supporters map[uint16]map[uint16]bool
+	votes      map[voteKey]int
+	supporters map[voteKey]map[uint16]bool
 	ranks      []int
 }
 
 func newVotingState(groups []string, groupOrder map[string]int) *votingState {
-	s := &votingState{groups: make(map[uint16]*groupVotes), votes: make(map[uint16]int), supporters: make(map[uint16]map[uint16]bool), ranks: make([]int, len(groups))}
+	s := &votingState{groups: make(map[uint16]*groupVotes), votes: make(map[voteKey]int), supporters: make(map[voteKey]map[uint16]bool), ranks: make([]int, len(groups))}
 	for i, g := range groups {
 		s.ranks[i] = int(^uint(0) >> 1)
 		if rank, ok := groupOrder[g]; ok {
@@ -198,8 +217,8 @@ func (s *votingState) update(e sortEvent) error {
 		g = &groupVotes{assignments: make(map[assignmentKey]*assignment)}
 		s.groups[e.group] = g
 	}
-	old := g.country()
-	key := assignmentKey{bits: e.bits, country: e.country, order: e.order}
+	old := g.vote()
+	key := assignmentKey{bits: e.bits, country: e.country, order: e.order, evidence: e.evidence}
 	a := g.assignments[key]
 	if a == nil {
 		if e.delta < 0 {
@@ -214,9 +233,9 @@ func (s *votingState) update(e sortEvent) error {
 		heap.Remove(&g.heap, a.index)
 		delete(g.assignments, key)
 	}
-	next := g.country()
+	next := g.vote()
 	if old != next {
-		if old != 0 {
+		if old.country != 0 {
 			s.votes[old]--
 			delete(s.supporters[old], e.group)
 			if s.votes[old] == 0 {
@@ -224,7 +243,7 @@ func (s *votingState) update(e sortEvent) error {
 				delete(s.supporters, old)
 			}
 		}
-		if next != 0 {
+		if next.country != 0 {
 			s.votes[next]++
 			if s.supporters[next] == nil {
 				s.supporters[next] = make(map[uint16]bool)
@@ -234,17 +253,32 @@ func (s *votingState) update(e sortEvent) error {
 	}
 	return nil
 }
-func (s *votingState) winner() (uint16, int, int) {
+func (s *votingState) winner() (uint16, int, int, model.EvidenceClass, int) {
+	if manual := s.groups[0]; manual != nil && len(manual.heap) > 0 {
+		k := manual.heap[0].key
+		return k.country, 0, 0, model.Manual, int(k.order)
+	}
+	method := model.Fallback
+	for key := range s.votes {
+		if key.evidence == model.Geolocation {
+			method = model.Geolocation
+			break
+		}
+	}
 	winner := uint16(0)
 	winning, total := 0, 0
 	bestRank := int(^uint(0) >> 1)
-	for country, count := range s.votes {
+	for key, count := range s.votes {
+		if key.evidence != method {
+			continue
+		}
+		country := key.country
 		total += count
 		if count < winning {
 			continue
 		}
 		rank := int(^uint(0) >> 1)
-		for group := range s.supporters[country] {
+		for group := range s.supporters[key] {
 			if s.ranks[group] < rank {
 				rank = s.ranks[group]
 			}
@@ -253,7 +287,7 @@ func (s *votingState) winner() (uint16, int, int) {
 			winner, winning, bestRank = country, count, rank
 		}
 	}
-	return winner, winning, total
+	return winner, winning, total, method, 0
 }
 
 type voteSpan struct {
@@ -261,9 +295,11 @@ type voteSpan struct {
 	winning, total int
 }
 type countryRun struct {
-	ipv6    bool
-	country uint16
-	spans   []voteSpan
+	method        model.EvidenceClass
+	overrideIndex int
+	ipv6          bool
+	country       uint16
+	spans         []voteSpan
 }
 
 func (r *countryRun) append(span voteSpan) {
@@ -312,10 +348,12 @@ func (r *countryRun) blocks(filter *iprange.PrefixFilter) []Block {
 				n := addressSpan(a, b, r.ipv6)
 				winning.Add(winning, new(big.Int).Mul(n, big.NewInt(int64(s.winning))))
 				total.Add(total, new(big.Int).Mul(n, big.NewInt(int64(s.total))))
-				weighted += float64Big(n) * 100 * float64(s.winning) / float64(s.total)
+				if s.total > 0 {
+					weighted += float64Big(n) * 100 * float64(s.winning) / float64(s.total)
+				}
 			}
 			code := string([]byte{byte(r.country >> 8), byte(r.country)})
-			blocks = append(blocks, Block{Prefix: part, Country: code, Confidence: weighted / float64Big(addressSpan(from, to, r.ipv6)), WinnerVotes: winning, TotalVotes: total})
+			blocks = append(blocks, Block{Prefix: part, Country: code, Method: r.method, OverrideIndex: r.overrideIndex, Confidence: weighted / float64Big(addressSpan(from, to, r.ipv6)), WinnerVotes: winning, TotalVotes: total})
 		}
 	}
 	return blocks
@@ -355,16 +393,26 @@ func sweepEvents(reader eventReader, groups []string, groupOrder map[string]int,
 			state = newVotingState(groups, groupOrder)
 			continue
 		}
-		country, winning, total := state.winner()
-		if total == 0 {
+		country, winning, total, method, overrideIndex := state.winner()
+		if country == 0 {
 			flush()
 			continue
 		}
-		if len(run.spans) > 0 && (run.country != country || run.ipv6 != family || run.spans[len(run.spans)-1].end != at) {
+		if len(run.spans) > 0 && (run.country != country || run.method != method || run.overrideIndex != overrideIndex || run.ipv6 != family || run.spans[len(run.spans)-1].end != at) {
 			flush()
 		}
-		run.country, run.ipv6 = country, family
+		run.country, run.ipv6, run.method, run.overrideIndex = country, family, method, overrideIndex
 		run.append(voteSpan{start: at, end: current.at, winning: winning, total: total})
 	}
 	return result, nil
+}
+
+// Group zero is reserved for manual rules and never casts a provider vote.
+func overrideEvents(o model.Override, index int) (sortEvent, sortEvent, error) {
+	p, err := netip.ParsePrefix(o.CIDR)
+	if err != nil || p != p.Masked() || len(o.Country) != 2 {
+		return sortEvent{}, sortEvent{}, fmt.Errorf("invalid override %q %q", o.CIDR, o.Country)
+	}
+	a, b := recordEvents(model.Record{Prefix: p, Country: o.Country, Evidence: model.Manual, RowOrder: index}, 0)
+	return a, b, nil
 }

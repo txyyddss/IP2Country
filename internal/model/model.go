@@ -2,7 +2,41 @@ package model
 
 import "net/netip"
 
+// The zero value preserves legacy geolocation records and configurations.
+type EvidenceClass uint8
+
+const (
+	Geolocation EvidenceClass = iota
+	Fallback
+	Manual
+)
+
+func (e EvidenceClass) String() string {
+	switch e {
+	case Fallback:
+		return "fallback"
+	case Manual:
+		return "manual"
+	default:
+		return "geolocation"
+	}
+}
+
+func (e EvidenceClass) Priority() int {
+	if e == Manual {
+		return -1
+	}
+	return int(e)
+}
+
+type Override struct {
+	CIDR    string `json:"cidr"`
+	Country string `json:"country"`
+	Reason  string `json:"reason,omitempty"`
+}
+
 type Record struct {
+	Evidence  EvidenceClass
 	Prefix    netip.Prefix
 	Country   string
 	SourceID  string
@@ -12,6 +46,7 @@ type Record struct {
 }
 
 type SourceStatus struct {
+	EvidenceClass string `json:"evidence_class,omitempty"`
 	ID            string `json:"id"`
 	Name          string `json:"name"`
 	Status        string `json:"status"`
@@ -35,9 +70,23 @@ type CountryStats struct {
 }
 
 type RunSummary struct {
-	GeneratedAt  string         `json:"generated_at_utc"`
-	Sources      []SourceStatus `json:"sources"`
-	Countries    []CountryStats `json:"countries"`
-	InputRecords int64          `json:"input_records"`
-	OutputBlocks int64          `json:"output_blocks"`
+	Overrides        []OverrideStatus         `json:"overrides"`
+	EvidenceCoverage map[string]CoverageStats `json:"evidence_coverage"`
+	GeneratedAt      string                   `json:"generated_at_utc"`
+	Sources          []SourceStatus           `json:"sources"`
+	Countries        []CountryStats           `json:"countries"`
+	InputRecords     int64                    `json:"input_records"`
+	OutputBlocks     int64                    `json:"output_blocks"`
+}
+
+type CoverageStats struct {
+	IPv4Blocks    int64  `json:"ipv4_blocks"`
+	IPv6Blocks    int64  `json:"ipv6_blocks"`
+	IPv4Addresses string `json:"ipv4_addresses"`
+	IPv6Addresses string `json:"ipv6_addresses"`
+}
+
+type OverrideStatus struct {
+	Override
+	Applied CoverageStats `json:"applied"`
 }

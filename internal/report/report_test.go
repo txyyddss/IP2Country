@@ -36,3 +36,42 @@ func TestCoverageRetainsTinyIPv6AndLargeIntegerPrecision(t *testing.T) {
 		t.Fatal("README units rounded through floating point")
 	}
 }
+
+func TestManualCoverageAndConfidenceExcludeForcedAssignments(t *testing.T) {
+	overrides := []model.Override{{CIDR: "8.8.8.0/24", Country: "HK", Reason: "confirmed | range"}, {CIDR: "8.8.8.128/25", Country: "JP"}, {CIDR: "10.0.0.0/8", Country: "HK"}}
+	records := []model.Record{{Prefix: netip.MustParsePrefix("8.8.9.0/24"), Country: "HK", VoteGroup: "first"}, {Prefix: netip.MustParsePrefix("8.8.9.0/24"), Country: "JP", VoteGroup: "second", Order: 1}}
+	blocks, err := consensus.Resolve(records, map[string]int{"first": 0, "second": 1}, consensus.BuiltinSpecialUse(), overrides...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	summary := BuildSummary(nil, blocks, 2, overrides...)
+	if summary.Overrides[0].Applied.IPv4Addresses != "128" || summary.Overrides[1].Applied.IPv4Addresses != "128" || summary.Overrides[2].Applied.IPv4Addresses != "0" {
+		t.Fatalf("wrong effective override coverage: %+v", summary.Overrides)
+	}
+	if summary.EvidenceCoverage["manual"].IPv4Addresses != "256" || summary.EvidenceCoverage["geolocation"].IPv4Addresses != "256" {
+		t.Fatalf("wrong method coverage: %+v", summary.EvidenceCoverage)
+	}
+	for _, country := range summary.Countries {
+		if country.Country == "HK" && country.AverageConf != "50.00%" {
+			t.Fatalf("manual altered confidence: %+v", country)
+		}
+		if country.Country == "JP" && country.AverageConf != "" {
+			t.Fatalf("manual-only country has confidence: %+v", country)
+		}
+	}
+	if !strings.Contains(render(summary), `confirmed \| range`) {
+		t.Fatal("override reason not escaped")
+	}
+}
+
+func TestNestedSameCountryOverridesKeepSeparateAppliedCoverage(t *testing.T) {
+	overrides := []model.Override{{CIDR: "8.8.8.0/24", Country: "HK"}, {CIDR: "8.8.8.128/25", Country: "HK"}}
+	blocks, err := consensus.Resolve([]model.Record{{Prefix: netip.MustParsePrefix("8.8.8.0/24"), Country: "US", VoteGroup: "fixture"}}, nil, nil, overrides...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	summary := BuildSummary(nil, blocks, 1, overrides...)
+	if len(blocks) != 2 || summary.Overrides[0].Applied.IPv4Addresses != "128" || summary.Overrides[1].Applied.IPv4Addresses != "128" {
+		t.Fatalf("same-country overrides merged: %+v", summary.Overrides)
+	}
+}

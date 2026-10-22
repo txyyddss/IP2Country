@@ -90,7 +90,7 @@ func (c *Collector) add(prefix netip.Prefix, country string) {
 		return
 	}
 	c.Result.Records = append(c.Result.Records, model.Record{
-		Prefix: prefix, Country: country, SourceID: c.Source.ID,
+		Prefix: prefix, Country: country, SourceID: c.Source.ID, Evidence: c.Source.Evidence(),
 		VoteGroup: c.Source.VoteGroup, Order: c.Order, RowOrder: c.rowOrder,
 	})
 	c.Result.Parsed++
@@ -651,14 +651,19 @@ func (c *Collector) parseMMDB(path string) error {
 			continue
 		}
 		country := c.Source.CountryOverride
+		registrationOnly := false
 		if country == "" {
-			country = findCountryValue(rec)
+			country, registrationOnly = findCountryEvidence(rec)
 		}
 		if country == "" {
 			c.Result.NoCountry++
 			continue
 		}
+		before := len(c.Result.Records)
 		c.add(result.Prefix(), country)
+		if registrationOnly && len(c.Result.Records) > before {
+			c.Result.Records[before].Evidence = model.Fallback
+		}
 	}
 	if len(c.Result.Records) == 0 {
 		return fmt.Errorf("MMDB has no country-coded networks")
@@ -667,7 +672,12 @@ func (c *Collector) parseMMDB(path string) error {
 }
 
 func findCountryValue(m map[string]any) string {
-	for _, path := range [][]string{{"country", "iso_code"}, {"registered_country", "iso_code"}, {"country_code"}, {"countryCode"}, {"iso_code"}, {"isoCode"}, {"country"}, {"country_iso_code"}} {
+	country, _ := findCountryEvidence(m)
+	return country
+}
+
+func findCountryEvidence(m map[string]any) (string, bool) {
+	for _, path := range [][]string{{"country", "iso_code"}, {"country_code"}, {"countryCode"}, {"iso_code"}, {"isoCode"}, {"country"}, {"country_iso_code"}, {"registered_country", "iso_code"}} {
 		var current any = m
 		ok := true
 		for _, key := range path {
@@ -684,11 +694,11 @@ func findCountryValue(m map[string]any) string {
 		}
 		if ok {
 			if s, yes := current.(string); yes && normalizeCountry(s) != "" {
-				return s
+				return s, path[0] == "registered_country"
 			}
 		}
 	}
-	return ""
+	return "", false
 }
 
 func (c *Collector) parseV2RayDat(path string) error {

@@ -228,14 +228,18 @@ func writeCountryCSVs(root string, byCountry map[string][]consensus.Block) error
 			return err
 		}
 		w := csv.NewWriter(f)
-		if err = w.Write([]string{"network", "country", "confidence_pct", "winner_votes", "total_votes"}); err != nil {
+		if err = w.Write([]string{"network", "country", "confidence_pct", "winner_votes", "total_votes", "assignment_method"}); err != nil {
 			f.Close()
 			return err
 		}
 		items := byCountry[cc]
 		sort.Slice(items, func(i, j int) bool { return items[i].Prefix.String() < items[j].Prefix.String() })
 		for _, b := range items {
-			if err := w.Write([]string{b.Prefix.String(), cc, fmt.Sprintf("%.4f", b.Confidence), b.WinnerVotes.String(), b.TotalVotes.String()}); err != nil {
+			confidence := fmt.Sprintf("%.4f", b.Confidence)
+			if b.Method == model.Manual {
+				confidence = ""
+			}
+			if err := w.Write([]string{b.Prefix.String(), cc, confidence, b.WinnerVotes.String(), b.TotalVotes.String(), b.Method.String()}); err != nil {
 				f.Close()
 				return err
 			}

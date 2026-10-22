@@ -40,7 +40,7 @@ func (s *RecordSpool) Write(r model.Record) error {
 	if !ok || group == 0 {
 		return fmt.Errorf("unknown vote group %q", r.VoteGroup)
 	}
-	if len(r.Country) != 2 || !r.Prefix.IsValid() {
+	if len(r.Country) != 2 || !r.Prefix.IsValid() || r.Evidence > model.Fallback {
 		return fmt.Errorf("invalid country/network record %q %s", r.Country, r.Prefix)
 	}
 	p := r.Prefix.Masked()
@@ -57,9 +57,10 @@ func (s *RecordSpool) Write(r model.Record) error {
 	if r.Order < 0 || r.Order > 65535 || r.RowOrder < 0 || uint64(r.RowOrder) > uint64(^uint32(0)) {
 		return fmt.Errorf("source order or row order exceeds spool format")
 	}
-	var header [2 + 2 + 2 + 2 + 4]byte
+	var header [2 + 2 + 2 + 2 + 4 + 1]byte
 	header[0] = family
 	header[1] = byte(p.Bits())
+	header[12] = byte(r.Evidence)
 	copy(header[2:4], r.Country)
 	binary.LittleEndian.PutUint16(header[4:6], group)
 	binary.LittleEndian.PutUint16(header[6:8], uint16(r.Order))
@@ -70,7 +71,7 @@ func (s *RecordSpool) Write(r model.Record) error {
 	if _, err := s.compressed.Write(addr); err != nil {
 		return err
 	}
-	_, err := s.compressed.Write(header[2:12])
+	_, err := s.compressed.Write(header[2:13])
 	return err
 }
 

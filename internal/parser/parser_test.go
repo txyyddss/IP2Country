@@ -11,10 +11,68 @@ import (
 	"github.com/maxmind/mmdbwriter"
 	"github.com/maxmind/mmdbwriter/mmdbtype"
 	"github.com/txyyddss/ip2country/internal/config"
+	"github.com/txyyddss/ip2country/internal/model"
 	"github.com/v2fly/geoip/plugin/v2ray"
 	"go4.org/netipx"
 	"google.golang.org/protobuf/proto"
 )
+
+func TestMMDBLocationFieldsPrecedeRegistrationAndRetainEvidence(t *testing.T) {
+	db, err := mmdbwriter.New(mmdbwriter.Options{DatabaseType: "Test-Country", IPVersion: 6, DisableIPv4Aliasing: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	values := []mmdbtype.Map{
+		{"country": mmdbtype.Map{"iso_code": mmdbtype.String("HK")}, "registered_country": mmdbtype.Map{"iso_code": mmdbtype.String("CN")}},
+		{"country_code": mmdbtype.String("HK"), "registered_country": mmdbtype.Map{"iso_code": mmdbtype.String("CN")}},
+		{"country_iso_code": mmdbtype.String("HK"), "registered_country": mmdbtype.Map{"iso_code": mmdbtype.String("CN")}},
+		{"registered_country": mmdbtype.Map{"iso_code": mmdbtype.String("CN")}},
+	}
+	prefixes := []string{"8.8.8.0/24", "8.8.9.0/24", "8.8.10.0/24", "8.8.11.0/24"}
+	for i, value := range values {
+		if err := db.Insert(netipx.PrefixIPNet(netip.MustParsePrefix(prefixes[i])), value); err != nil {
+			t.Fatal(err)
+		}
+	}
+	path := filepath.Join(t.TempDir(), "evidence.mmdb")
+	f, err := os.Create(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, writeErr := db.WriteTo(f)
+	closeErr := f.Close()
+	if writeErr != nil {
+		t.Fatal(writeErr)
+	}
+	if closeErr != nil {
+		t.Fatal(closeErr)
+	}
+	for _, class := range []string{"geolocation", "fallback"} {
+		source := testSource("mmdb")
+		source.EvidenceClass = class
+		parsed, err := ParseFile(source, path, 0)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(parsed.Records) != 4 {
+			t.Fatalf("wrong record count: %+v", parsed)
+		}
+		for _, r := range parsed.Records {
+			registration := r.Prefix.String() == prefixes[3]
+			wantCountry := "HK"
+			wantClass := model.Geolocation
+			if registration {
+				wantCountry = "CN"
+			}
+			if registration || class == "fallback" {
+				wantClass = model.Fallback
+			}
+			if r.Country != wantCountry || r.Evidence != wantClass {
+				t.Fatalf("wrong MMDB interpretation: %+v", r)
+			}
+		}
+	}
+}
 
 func testSource(format string) config.Source {
 	return config.Source{ID: "fixture", Name: "fixture", VoteGroup: "fixture", Role: "country", Format: format, URLs: []string{"fixture"}}
