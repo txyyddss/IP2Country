@@ -64,9 +64,9 @@ The GeoIP workflow runs at 00:00 UTC each day and supports `workflow_dispatch`. 
 <!-- GEOIP-STATISTICS:START -->
 ## Generated data status
 
-Last run: `2026-10-22T18:00:39Z`
+Last run: `2026-10-23T03:26:40Z`
 
-Input rows: **38959082** · Published blocks: **2344857**
+Input rows: **38959557** · Published blocks: **2344857**
 
 ### Source availability
 
@@ -80,16 +80,16 @@ Input rows: **38959082** · Published blocks: **2344857**
 | GeoLite2 via sapics IPv6 | fresh | 0 | 499547 | 0 | 0 | 14984389 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/geolite2-country/geolite2-country-ipv6.csv |
 | GeoLite2 via tdulcet IPv4 | fresh | 564252 | 0 | 0 | 532 | 11826650 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geolite2-country/ipv4.tsv?inline=false |
 | GeoLite2 via tdulcet IPv6 | fresh | 0 | 499624 | 0 | 153 | 34484307 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geolite2-country/ipv6.tsv?inline=false |
-| Server-Country via sapics IPv4 | fresh | 399332 | 0 | 0 | 0 | 8703030 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/server-country/server-country-ipv4.csv |
-| Server-Country via sapics IPv6 | fresh | 0 | 471892 | 0 | 1 | 15532821 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/server-country/server-country-ipv6.csv |
+| Server-Country via sapics IPv4 | fresh | 399513 | 0 | 0 | 0 | 8706395 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/server-country/server-country-ipv4.csv |
+| Server-Country via sapics IPv6 | fresh | 0 | 471895 | 0 | 1 | 15536858 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/server-country/server-country-ipv6.csv |
 | Geo-Whois-ASN-Country IPv4 | fresh | 399332 | 0 | 0 | 0 | 5944556 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geo-whois-asn-country/ipv4.tsv?inline=false |
 | Geo-Whois-ASN-Country IPv6 | fresh | 0 | 471892 | 0 | 1 | 18357174 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geo-whois-asn-country/ipv6.tsv?inline=false |
-| User-Country IPv4 | fresh | 416275 | 0 | 0 | 0 | 9081341 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/user-country/user-country-ipv4.csv |
-| User-Country IPv6 | fresh | 0 | 564140 | 0 | 1 | 16758258 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/user-country/user-country-ipv6.csv |
+| User-Country IPv4 | fresh | 416608 | 0 | 0 | 0 | 9086515 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/user-country/user-country-ipv4.csv |
+| User-Country IPv6 | fresh | 0 | 563801 | 0 | 1 | 16751515 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/user-country/user-country-ipv6.csv |
 | IP to ASN Country IPv4 | fresh | 722047 | 0 | 0 | 2141 | 9617435 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/iptoasn-country/ipv4.tsv?inline=false |
 | IP to ASN Country IPv6 | fresh | 0 | 288015 | 0 | 3994 | 8458227 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/iptoasn-country/ipv6.tsv?inline=false |
-| IPtoASN via sapics IPv4 CSV | fresh | 321721 | 0 | 0 | 0 | 7033663 | https://github.com/sapics/ip-location-db/releases/download/latest/iptoasn-country-ipv4.csv |
-| IPtoASN via sapics IPv6 CSV | fresh | 0 | 87746 | 0 | 0 | 3808349 | https://github.com/sapics/ip-location-db/releases/download/latest/iptoasn-country-ipv6.csv |
+| IPtoASN via sapics IPv4 CSV | fresh | 321846 | 0 | 0 | 0 | 7036175 | https://github.com/sapics/ip-location-db/releases/download/latest/iptoasn-country-ipv4.csv |
+| IPtoASN via sapics IPv6 CSV | fresh | 0 | 87790 | 0 | 0 | 3810170 | https://github.com/sapics/ip-location-db/releases/download/latest/iptoasn-country-ipv6.csv |
 | IPINFO via tdulcet IPv4 | fresh | 983015 | 0 | 0 | 0 | 13008374 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/ipinfo-country/ipv4.tsv?inline=false |
 | IPINFO via tdulcet IPv6 | fresh | 0 | 2711230 | 0 | 0 | 85362453 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/ipinfo-country/ipv6.tsv?inline=false |
 | IPinfo via xream MMDB | fresh | 955329 | 2063526 | 0 | 17 | 18149674 | https://github.com/xream/geoip/releases/latest/download/ipinfo.country.mmdb |
@@ -98,14 +98,14 @@ Input rows: **38959082** · Published blocks: **2344857**
 | IP2Location IPv6 | fresh | 0 | 1512762 | 0 | 0 | 24574212 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/ip2location-country/ipv6.tsv?inline=false |
 | IP2Location Lite via xream MMDB | fresh | 384815 | 1499498 | 0 | 314195 | 13193749 | https://github.com/xream/geoip/releases/latest/download/ip2location.country.mmdb |
 | IPLocate | fresh | 785473 | 1365969 | 0 | 0 | 17218952 | https://github.com/iplocate/ip-address-databases/raw/refs/heads/main/ip-to-country/ip-to-country.mmdb |
-| IPGeo | fresh | 177137 | 69702 | 0 | 0 | 3394351 | https://github.com/analogic/ipgeo/raw/refs/heads/master/ipgeo-country.mmdb |
-| IPRanges | fresh | 287226 | 492089 | 0 | 97968 | 40900571 | https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.json |
-| IPRanges country CSV | fresh | 287226 | 492089 | 0 | 98538 | 18506555 | https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.csv |
+| IPGeo | fresh | 177135 | 69712 | 0 | 0 | 3394747 | https://github.com/analogic/ipgeo/raw/refs/heads/master/ipgeo-country.mmdb |
+| IPRanges | fresh | 287221 | 492129 | 0 | 97964 | 40902129 | https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.json |
+| IPRanges country CSV | fresh | 287221 | 492129 | 0 | 98534 | 18507297 | https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.csv |
 | Clang CN | fresh | 4317 | 1673 | 0 | 0 | 97542 | https://ispip.clang.cn/all_cn_ipv46.txt |
 | CHNRoutes2 | fresh | 3882 | 0 | 0 | 0 | 82437 | https://github.com/misakaio/chnroutes2/raw/refs/heads/master/chnroutes.mmdb |
-| SYPEX Country | fresh | 327605 | 0 | 0 | 0 | 537559 | https://sypexgeo.net/files/SxGeoCountry.zip |
+| SYPEX Country | fresh | 327613 | 0 | 0 | 0 | 537556 | https://sypexgeo.net/files/SxGeoCountry.zip |
 | IP66 | fresh | 808843 | 423033 | 0 | 411180 | 18237399 | https://downloads.ip66.dev/db/ip66.mmdb |
-| IANA IP Blocks | fresh | 262260 | 70960 | 0 | 10 | 34571222 | https://raw.githubusercontent.com/HotCakeX/Official-IANA-IP-blocks/refs/heads/main/JSON/global.json |
+| IANA IP Blocks | fresh | 262289 | 70973 | 0 | 10 | 34575579 | https://raw.githubusercontent.com/HotCakeX/Official-IANA-IP-blocks/refs/heads/main/JSON/global.json |
 | IP-Geolocation-DB | fresh | 923960 | 763194 | 0 | 1370 | 15398223 | https://github.com/HostByBelle/IP-Geolocation-DB/releases/latest/download/cc0-pddl-country-asn-both-variant-1.mmdb |
 | IPAPI.IS IPv4 | fresh | 4921366 | 0 | 0 | 0 | 65954248 | https://ipapi.is/data/geolocationDatabaseIPv4.csv.zip |
 | IPAPI.IS IPv6 | fresh | 0 | 792430 | 0 | 0 | 8460577 | https://ipapi.is/data/geolocationDatabaseIPv6.csv.zip |
