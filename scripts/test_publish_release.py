@@ -28,7 +28,10 @@ class FakeGitHub(GitHub):
         self.fail_tag_once = False
 
     def release(self, tag):
-        return copy.deepcopy(self.releases.get(tag))
+        item = self.releases.get(tag)
+        if item is None or item.get("draft"):
+            return None
+        return copy.deepcopy(item)
 
     def tag(self, tag):
         return {"ref": tag} if tag in self.tags else None
@@ -127,7 +130,7 @@ class ReleaseTests(unittest.TestCase):
                 client = FakeGitHub(self.root, old); client.fail = ("release", operation)
                 with self.assertRaises(subprocess.CalledProcessError): self.publish(client)
                 self.assertIn("geoip-20261020", client.releases)
-                self.assertFalse(any(c[:2] == ("pages", "releases") for c in client.calls))
+                self.assertFalse(any(c[:2] == ("release", "delete") for c in client.calls))
 
     def test_failed_asset_verification_never_publishes_or_cleans(self):
         for failure in ("bad_digest", "bad_size", "missing_asset"):
@@ -175,6 +178,22 @@ class ReleaseTests(unittest.TestCase):
         with patch.object(client, "run", side_effect=subprocess.CalledProcessError(1, "gh", stderr="HTTP 403")):
             with self.assertRaises(subprocess.CalledProcessError): client.release("denied")
 
+    def test_release_including_drafts_falls_back_to_release_list(self):
+        client = GitHub("fixture/repo")
+        draft = release("geoip-20261023"); draft["draft"] = True
+        with patch.object(client, "release", return_value=None), \
+             patch.object(client, "pages", return_value=[draft]) as pages:
+            self.assertEqual(client.release_including_drafts("geoip-20261023"), draft)
+            pages.assert_called_once_with("releases")
+
+    def test_published_release_lookup_does_not_fall_back(self):
+        client = GitHub("fixture/repo")
+        published = release("geoip-20261022")
+        with patch.object(client, "release", return_value=published), \
+             patch.object(client, "pages") as pages:
+            self.assertEqual(client.release_including_drafts("geoip-20261022"), published)
+            pages.assert_not_called()
+
     def test_invalid_tag_and_protected_same_day_prerelease(self):
         self.assertIsNone(release_date("geoip-20260230"))
         self.assertIsNone(release_date("v1.0"))
@@ -186,7 +205,7 @@ class ReleaseTests(unittest.TestCase):
     def test_already_removed_release_is_idempotent(self):
         client = GitHub("fixture/repo")
         with patch.object(client, "run", side_effect=subprocess.CalledProcessError(1, "gh", stderr="HTTP 404")), \
-             patch.object(client, "release", return_value=None), \
+             patch.object(client, "release_including_drafts", return_value=None), \
              patch.object(client, "tag", return_value=None):
             client.delete_release("geoip-20261020")
 

@@ -56,6 +56,18 @@ class GitHub:
     def release(self, tag):
         return self.optional_api(f"releases/tags/{quote(tag, safe='')}")
 
+    def release_including_drafts(self, tag):
+        # GitHub's releases/tags endpoint omits drafts, so fall back to the
+        # paginated release list while a newly created release is still a draft.
+        release = self.release(tag)
+        if release is not None:
+            return release
+        return next(
+            (candidate for candidate in self.pages("releases")
+             if candidate.get("tag_name") == tag),
+            None,
+        )
+
     def tag(self, tag):
         return self.optional_api(f"git/ref/tags/{quote(tag, safe='')}")
 
@@ -79,12 +91,12 @@ class GitHub:
             self.run("release", "delete", tag, "--cleanup-tag", "--yes",
                      "--repo", self.repo)
         except subprocess.CalledProcessError:
-            if self.release(tag) is not None:
+            if self.release_including_drafts(tag) is not None:
                 raise
             # A prior attempt may have deleted the release but not its tag.
             if self.tag(tag) is not None:
                 self.delete_tag(tag)
-        if self.release(tag) is not None or self.tag(tag) is not None:
+        if self.release_including_drafts(tag) is not None or self.tag(tag) is not None:
             raise RuntimeError(f"Cleanup did not remove release and tag {tag}")
 
 
@@ -116,7 +128,7 @@ def publish_and_prune(client, root, tag, target):
     for name in ASSETS:
         if not (root / name).is_file() or (root / name).stat().st_size == 0:
             raise RuntimeError(f"Missing or empty release asset: {name}")
-    existing = client.release(tag)
+    existing = client.release_including_drafts(tag)
     if existing and existing.get("prerelease"):
         raise RuntimeError(f"Refusing to replace prerelease {tag}")
     paths = [str(root / name) for name in ASSETS]
@@ -127,12 +139,12 @@ def publish_and_prune(client, root, tag, target):
                    "--title", tag, "--notes",
                    "Daily country GeoIP generation. See run-summary.json and SHA256SUMS for source status and integrity hashes.",
                    "--repo", client.repo)
-    uploaded = client.release(tag)
+    uploaded = client.release_including_drafts(tag)
     if uploaded is None:
         raise RuntimeError(f"Release {tag} missing after upload")
     verify_assets(client, uploaded, root)
     client.run("release", "edit", tag, "--draft=false", "--latest", "--repo", client.repo)
-    published = client.release(tag)
+    published = client.release_including_drafts(tag)
     if published is None or published.get("draft") or published.get("prerelease") or not published.get("published_at"):
         raise RuntimeError(f"Release {tag} was not published")
     verify_assets(client, published, root)
@@ -144,7 +156,7 @@ def publish_and_prune(client, root, tag, target):
         if old_date is None or old_date >= date or old.get("draft") or old.get("prerelease") or not old.get("published_at"):
             continue
         # Recheck immediately before deletion, including a concurrent protection change.
-        current = client.release(old_tag)
+        current = client.release_including_drafts(old_tag)
         if current and (current.get("draft") or current.get("prerelease") or not current.get("published_at")):
             continue
         if current:
@@ -157,7 +169,7 @@ def publish_and_prune(client, root, tag, target):
     for ref in client.pages("tags"):
         old_tag = ref["name"]
         old_date = release_date(old_tag)
-        if old_date is not None and old_date < date and client.release(old_tag) is None:
+        if old_date is not None and old_date < date and client.release_including_drafts(old_tag) is None:
             client.delete_tag(old_tag)
             print(f"Removed orphaned older GeoIP tag: {old_tag}", flush=True)
     print(f"Published and verified {tag}; release retention complete", flush=True)
