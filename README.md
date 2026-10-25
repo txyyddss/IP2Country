@@ -64,7 +64,7 @@ The GeoIP workflow runs at 00:00 UTC each day and supports `workflow_dispatch`. 
 <!-- GEOIP-STATISTICS:START -->
 ## Generated data status
 
-Last run: `2026-10-25T01:50:36Z`
+Last run: `2026-10-25T03:15:30Z`
 
 Input rows: **38961856** · Published blocks: **2347173**
 
@@ -102,7 +102,7 @@ Input rows: **38961856** · Published blocks: **2347173**
 | IPRanges | fresh | 289856 | 492472 | 0 | 97800 | 41026977 | https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.json |
 | IPRanges country CSV | fresh | 289856 | 492472 | 0 | 98389 | 18562285 | https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.csv |
 | Clang CN | fresh | 4317 | 1673 | 0 | 0 | 97542 | https://ispip.clang.cn/all_cn_ipv46.txt |
-| CHNRoutes2 | fresh | 3881 | 0 | 0 | 0 | 82395 | https://github.com/misakaio/chnroutes2/raw/refs/heads/master/chnroutes.mmdb |
+| CHNRoutes2 | fresh | 3881 | 0 | 0 | 0 | 82389 | https://github.com/misakaio/chnroutes2/raw/refs/heads/master/chnroutes.mmdb |
 | SYPEX Country | fresh | 327613 | 0 | 0 | 0 | 537556 | https://sypexgeo.net/files/SxGeoCountry.zip |
 | IP66 | fresh | 811519 | 427393 | 0 | 411163 | 18451739 | https://downloads.ip66.dev/db/ip66.mmdb |
 | IANA IP Blocks | fresh | 262329 | 70996 | 0 | 10 | 34582134 | https://raw.githubusercontent.com/HotCakeX/Official-IANA-IP-blocks/refs/heads/main/JSON/global.json |
