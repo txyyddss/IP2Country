@@ -64,9 +64,9 @@ The GeoIP workflow runs at 00:00 UTC each day and supports `workflow_dispatch`. 
 <!-- GEOIP-STATISTICS:START -->
 ## Generated data status
 
-Last run: `2026-10-26T03:16:15Z`
+Last run: `2026-10-27T03:46:36Z`
 
-Input rows: **38963901** · Published blocks: **2347927**
+Input rows: **38966401** · Published blocks: **2347827**
 
 ### Source availability
 
@@ -80,16 +80,16 @@ Input rows: **38963901** · Published blocks: **2347927**
 | GeoLite2 via sapics IPv6 | fresh | 0 | 499124 | 0 | 0 | 14990890 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/geolite2-country/geolite2-country-ipv6.csv |
 | GeoLite2 via tdulcet IPv4 | fresh | 564038 | 0 | 0 | 158 | 11815050 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geolite2-country/ipv4.tsv?inline=false |
 | GeoLite2 via tdulcet IPv6 | fresh | 0 | 499207 | 0 | 88 | 34451179 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geolite2-country/ipv6.tsv?inline=false |
-| Server-Country via sapics IPv4 | fresh | 399791 | 0 | 0 | 0 | 8712547 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/server-country/server-country-ipv4.csv |
-| Server-Country via sapics IPv6 | fresh | 0 | 472523 | 0 | 1 | 15557062 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/server-country/server-country-ipv6.csv |
-| Geo-Whois-ASN-Country IPv4 | fresh | 399726 | 0 | 0 | 0 | 5950606 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geo-whois-asn-country/ipv4.tsv?inline=false |
-| Geo-Whois-ASN-Country IPv6 | fresh | 0 | 472301 | 0 | 1 | 18367179 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geo-whois-asn-country/ipv6.tsv?inline=false |
-| User-Country IPv4 | fresh | 416904 | 0 | 0 | 0 | 9092935 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/user-country/user-country-ipv4.csv |
-| User-Country IPv6 | fresh | 0 | 564429 | 0 | 1 | 16771719 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/user-country/user-country-ipv6.csv |
-| IP to ASN Country IPv4 | fresh | 721939 | 0 | 0 | 2143 | 9618635 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/iptoasn-country/ipv4.tsv?inline=false |
-| IP to ASN Country IPv6 | fresh | 0 | 289086 | 0 | 3995 | 8477476 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/iptoasn-country/ipv6.tsv?inline=false |
-| IPtoASN via sapics IPv4 CSV | fresh | 322116 | 0 | 0 | 0 | 7041865 | https://github.com/sapics/ip-location-db/releases/download/latest/iptoasn-country-ipv4.csv |
-| IPtoASN via sapics IPv6 CSV | fresh | 0 | 87881 | 0 | 0 | 3816211 | https://github.com/sapics/ip-location-db/releases/download/latest/iptoasn-country-ipv6.csv |
+| Server-Country via sapics IPv4 | fresh | 400118 | 0 | 0 | 0 | 8721277 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/server-country/server-country-ipv4.csv |
+| Server-Country via sapics IPv6 | fresh | 0 | 472705 | 0 | 1 | 15561140 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/server-country/server-country-ipv6.csv |
+| Geo-Whois-ASN-Country IPv4 | fresh | 399791 | 0 | 0 | 0 | 5950923 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geo-whois-asn-country/ipv4.tsv?inline=false |
+| Geo-Whois-ASN-Country IPv6 | fresh | 0 | 472523 | 0 | 1 | 18385464 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/geo-whois-asn-country/ipv6.tsv?inline=false |
+| User-Country IPv4 | fresh | 417243 | 0 | 0 | 0 | 9101946 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/user-country/user-country-ipv4.csv |
+| User-Country IPv6 | fresh | 0 | 564613 | 0 | 1 | 16775917 | https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/user-country/user-country-ipv6.csv |
+| IP to ASN Country IPv4 | fresh | 722085 | 0 | 0 | 2141 | 9620270 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/iptoasn-country/ipv4.tsv?inline=false |
+| IP to ASN Country IPv6 | fresh | 0 | 289103 | 0 | 3994 | 8485275 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/iptoasn-country/ipv6.tsv?inline=false |
+| IPtoASN via sapics IPv4 CSV | fresh | 322185 | 0 | 0 | 0 | 7044716 | https://github.com/sapics/ip-location-db/releases/download/latest/iptoasn-country-ipv4.csv |
+| IPtoASN via sapics IPv6 CSV | fresh | 0 | 87964 | 0 | 0 | 3820654 | https://github.com/sapics/ip-location-db/releases/download/latest/iptoasn-country-ipv6.csv |
 | IPINFO via tdulcet IPv4 | fresh | 978654 | 0 | 0 | 0 | 12966588 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/ipinfo-country/ipv4.tsv?inline=false |
 | IPINFO via tdulcet IPv6 | fresh | 0 | 2708038 | 0 | 0 | 85202442 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/ipinfo-country/ipv6.tsv?inline=false |
 | IPinfo via xream MMDB | fresh | 955329 | 2063526 | 0 | 17 | 18149674 | https://github.com/xream/geoip/releases/latest/download/ipinfo.country.mmdb |
@@ -97,20 +97,20 @@ Input rows: **38963901** · Published blocks: **2347927**
 | IP2Location IPv4 | fresh | 390273 | 0 | 0 | 0 | 6100911 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/ip2location-country/ipv4.tsv?inline=false |
 | IP2Location IPv6 | fresh | 0 | 1512762 | 0 | 0 | 24574212 | https://gitlab.com/tdulcet/ip-geolocation-dbs/-/raw/main/ip2location-country/ipv6.tsv?inline=false |
 | IP2Location Lite via xream MMDB | fresh | 384815 | 1499498 | 0 | 314195 | 13193749 | https://github.com/xream/geoip/releases/latest/download/ip2location.country.mmdb |
-| IPLocate | fresh | 786527 | 1368454 | 0 | 0 | 17247264 | https://github.com/iplocate/ip-address-databases/raw/refs/heads/main/ip-to-country/ip-to-country.mmdb |
-| IPGeo | fresh | 177163 | 69733 | 0 | 0 | 3395659 | https://github.com/analogic/ipgeo/raw/refs/heads/master/ipgeo-country.mmdb |
-| IPRanges | fresh | 290366 | 492397 | 0 | 97495 | 41029325 | https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.json |
-| IPRanges country CSV | fresh | 290366 | 492397 | 0 | 98065 | 18562569 | https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.csv |
-| Clang CN | fresh | 4328 | 1676 | 0 | 0 | 97770 | https://ispip.clang.cn/all_cn_ipv46.txt |
-| CHNRoutes2 | fresh | 3880 | 0 | 0 | 0 | 82329 | https://github.com/misakaio/chnroutes2/raw/refs/heads/master/chnroutes.mmdb |
+| IPLocate | fresh | 787197 | 1368672 | 0 | 0 | 17254368 | https://github.com/iplocate/ip-address-databases/raw/refs/heads/main/ip-to-country/ip-to-country.mmdb |
+| IPGeo | fresh | 177161 | 69737 | 0 | 0 | 3395773 | https://github.com/analogic/ipgeo/raw/refs/heads/master/ipgeo-country.mmdb |
+| IPRanges | fresh | 290366 | 492465 | 0 | 97494 | 41032544 | https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.json |
+| IPRanges country CSV | fresh | 290366 | 492465 | 0 | 98064 | 18564036 | https://raw.githubusercontent.com/hexydec/ip-ranges/main/output/countries.csv |
+| Clang CN | fresh | 4318 | 1676 | 0 | 0 | 97604 | https://ispip.clang.cn/all_cn_ipv46.txt |
+| CHNRoutes2 | fresh | 3882 | 0 | 0 | 0 | 82389 | https://github.com/misakaio/chnroutes2/raw/refs/heads/master/chnroutes.mmdb |
 | SYPEX Country | fresh | 327613 | 0 | 0 | 0 | 537556 | https://sypexgeo.net/files/SxGeoCountry.zip |
-| IP66 | fresh | 811519 | 427393 | 0 | 411163 | 18451739 | https://downloads.ip66.dev/db/ip66.mmdb |
-| IANA IP Blocks | fresh | 262329 | 70996 | 0 | 10 | 34582134 | https://raw.githubusercontent.com/HotCakeX/Official-IANA-IP-blocks/refs/heads/main/JSON/global.json |
+| IP66 | fresh | 811454 | 427307 | 0 | 410930 | 18454568 | https://downloads.ip66.dev/db/ip66.mmdb |
+| IANA IP Blocks | fresh | 262326 | 70997 | 0 | 10 | 34581927 | https://raw.githubusercontent.com/HotCakeX/Official-IANA-IP-blocks/refs/heads/main/JSON/global.json |
 | IP-Geolocation-DB | fresh | 923960 | 763194 | 0 | 1370 | 15398223 | https://github.com/HostByBelle/IP-Geolocation-DB/releases/latest/download/cc0-pddl-country-asn-both-variant-1.mmdb |
 | IPAPI.IS IPv4 | fresh | 4921366 | 0 | 0 | 0 | 65954248 | https://ipapi.is/data/geolocationDatabaseIPv4.csv.zip |
 | IPAPI.IS IPv6 | fresh | 0 | 792430 | 0 | 0 | 8460577 | https://ipapi.is/data/geolocationDatabaseIPv6.csv.zip |
 | IP2Region | fresh | 802825 | 0 | 0 | 0 | 11122642 | https://github.com/adysec/IP_database/raw/refs/heads/main/ip2region/ip2region.xdb |
-| gaoyifan China operator IPv4+IPv6 | fresh | 6525 | 3488 | 0 | 0 | 159289 | https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china46.txt |
+| gaoyifan China operator IPv4+IPv6 | fresh | 6525 | 3489 | 0 | 0 | 159307 | https://raw.githubusercontent.com/gaoyifan/china-operator-ip/ip-lists/china46.txt |
 | Iran CIDRs by parsamoh | fresh | 1748 | 574 | 0 | 0 | 36004 | https://github.com/parsamoh/geoip/releases/latest/download/iran-cidr.txt |
 | GeoLite2 Country via P3TERX | fresh | 564963 | 499997 | 0 | 0 | 3403332 | https://github.com/P3TERX/GeoLite.mmdb/releases/latest/download/GeoLite2-Country.mmdb |
 
@@ -118,7 +118,7 @@ Input rows: **38963901** · Published blocks: **2347927**
 
 | Method | IPv4 blocks | IPv4 addresses | IPv6 blocks | IPv6 addresses |
 |---|---:|---:|---:|---:|
-| geolocation | 601473 | 3702257408 | 1746204 | 293421847207842436812546030166054273024 |
+| geolocation | 601511 | 3702257408 | 1746066 | 293421847207842436812546030166054273024 |
 | fallback | 0 | 0 | 246 | 42535295865116098988655467213201866752 |
 | manual | 4 | 1024 | 0 | 0 |
 
@@ -138,27 +138,27 @@ Confidence measures agreement among participating provider groups, not measured 
 | Country | IPv4 blocks | IPv4 /24 units | IPv6 blocks | IPv6 /64 units | Average confidence |
 |---|---:|---:|---:|---:|---:|
 | AD | 212 | 307 | 188 | 43781127495 | 91.72% |
-| AE | 2857 | 25471 | 2563 | 12826428474176 | 89.83% |
+| AE | 2858 | 25479 | 2563 | 12826428474176 | 89.83% |
 | AF | 232 | 878 | 520 | 121053017998 | 97.45% |
 | AG | 120 | 177 | 184 | 40375548219 | 65.28% |
 | AI | 44 | 46 | 102 | 5830802746 | 67.48% |
-| AL | 569 | 1421 | 1262 | 2500709067418 | 95.22% |
-| AM | 333 | 2306 | 527 | 1259266681303 | 94.71% |
-| AO | 555 | 5126 | 297 | 143305134687 | 98.64% |
+| AL | 574 | 1422 | 1262 | 2500709067418 | 95.22% |
+| AM | 334 | 2307 | 527 | 1259266681303 | 94.71% |
+| AO | 600 | 5128 | 297 | 143305134687 | 98.64% |
 | AQ | 63 | 6 | 296 | 469396616 | 43.60% |
 | AR | 3742 | 76924 | 2915 | 23609250788245 | 98.82% |
 | AS | 39 | 28 | 332 | 9241098697 | 96.06% |
-| AT | 4691 | 45121 | 4637 | 10476626752782 | 97.51% |
-| AU | 13006 | 219003 | 8211 | 2305920540272086282 | 100.00% |
+| AT | 4682 | 45119 | 4637 | 10476626752782 | 97.51% |
+| AU | 13008 | 219016 | 8211 | 2305920540272086282 | 100.00% |
 | AW | 49 | 449 | 98 | 11516819767 | 93.04% |
-| AX | 101 | 132 | 608 | 69601594443 | 74.62% |
+| AX | 100 | 131 | 608 | 69601594443 | 74.62% |
 | AZ | 398 | 3068 | 346 | 1934087189375 | 99.30% |
 | BA | 340 | 3264 | 744 | 803811946268 | 94.68% |
 | BB | 190 | 508 | 105 | 69382748975 | 99.71% |
 | BD | 2635 | 8174 | 2722 | 3577608893952 | 96.42% |
-| BE | 8522 | 58086 | 73323 | 8440506885909643 | 66.66% |
+| BE | 8544 | 58087 | 73323 | 8440506885909643 | 66.66% |
 | BF | 125 | 1382 | 144 | 91261127222 | 99.42% |
-| BG | 2367 | 16720 | 1441 | 5172162259008 | 95.72% |
+| BG | 2369 | 16718 | 1441 | 5172162259008 | 95.72% |
 | BH | 320 | 5245 | 255 | 406107403345 | 97.65% |
 | BI | 58 | 167 | 109 | 26902590248 | 92.88% |
 | BJ | 83 | 620 | 113 | 56564881968 | 96.86% |
@@ -167,63 +167,63 @@ Confidence measures agreement among participating provider groups, not measured 
 | BN | 109 | 878 | 120 | 26232795439 | 95.82% |
 | BO | 336 | 4758 | 312 | 168267936621 | 97.23% |
 | BQ | 36 | 103 | 74 | 17538087218 | 98.90% |
-| BR | 11490 | 335972 | 43002 | 37432203406920 | 99.15% |
+| BR | 11487 | 335971 | 43002 | 37432203406920 | 99.15% |
 | BS | 135 | 632 | 165 | 13972409177 | 96.80% |
 | BT | 124 | 226 | 165 | 60945265233 | 99.38% |
 | BV | 4 | 1 | 3 | 1048577 | 50.00% |
 | BW | 182 | 717 | 125 | 78595310128 | 97.52% |
 | BY | 408 | 7402 | 429 | 700179084599 | 99.59% |
 | BZ | 210 | 475 | 198 | 192696613700 | 89.03% |
-| CA | 19388 | 285275 | 31139 | 6346741955196 | 95.55% |
+| CA | 19417 | 285272 | 31139 | 6346741955196 | 95.55% |
 | CC | 6 | 0 | 51 | 842922262 | 43.18% |
 | CD | 313 | 932 | 203 | 155930247762 | 98.74% |
 | CF | 49 | 40 | 98 | 1050231082 | 60.02% |
 | CG | 89 | 585 | 119 | 36970586417 | 97.19% |
-| CH | 6926 | 98843 | 57198 | 15878800879350653365 | 99.98% |
+| CH | 6925 | 98331 | 57197 | 15878800879350652341 | 99.98% |
 | CI | 348 | 6837 | 168 | 194903530039 | 98.93% |
 | CK | 33 | 41 | 85 | 9217637679 | 96.15% |
 | CL | 2023 | 41392 | 2394 | 1415225294385 | 96.62% |
 | CM | 191 | 2438 | 161 | 67915819084 | 98.17% |
-| CN | 7029 | 1347939 | 13082 | 294817155704526 | 99.94% |
+| CN | 7032 | 1347934 | 13081 | 294817155704525 | 99.94% |
 | CO | 3141 | 70219 | 1950 | 1977320178832 | 97.73% |
 | CR | 597 | 9171 | 396 | 461687196789 | 97.36% |
 | CU | 99 | 1022 | 132 | 26422788669 | 99.21% |
 | CV | 81 | 240 | 139 | 13663992110 | 97.38% |
 | CW | 140 | 720 | 100 | 62973163821 | 92.55% |
 | CX | 7 | 0 | 77 | 726513958 | 41.65% |
-| CY | 688 | 4146 | 694 | 5999830445154 | 93.92% |
-| CZ | 3770 | 33870 | 6768 | 13290450376572 | 97.58% |
-| DE | 38030 | 550997 | 81448 | 115252641966494 | 96.05% |
+| CY | 686 | 4146 | 694 | 5999830445154 | 93.92% |
+| CZ | 3769 | 33866 | 6768 | 13290450376572 | 97.58% |
+| DE | 37868 | 551060 | 81476 | 115252641835360 | 96.05% |
 | DJ | 70 | 243 | 117 | 9808902189 | 94.09% |
-| DK | 3713 | 50113 | 2087 | 9667298825636 | 93.46% |
+| DK | 3715 | 50128 | 2087 | 9667298825636 | 93.46% |
 | DM | 74 | 71 | 115 | 44384058159 | 73.09% |
 | DO | 739 | 8066 | 652 | 928490784380 | 98.99% |
 | DZ | 226 | 18725 | 259 | 44143311290 | 93.89% |
 | EC | 1122 | 11253 | 670 | 1158522081388 | 98.69% |
-| EE | 1174 | 6515 | 1726 | 2730065773796 | 95.97% |
-| EG | 799 | 94820 | 375 | 17730956358301 | 99.99% |
+| EE | 1171 | 6512 | 1726 | 2730065773796 | 95.97% |
+| EG | 799 | 94820 | 296 | 17730956358301 | 99.99% |
 | EH | 4 | 0 | 55 | 457177368 | 46.78% |
 | ER | 46 | 29 | 93 | 998656297 | 59.40% |
-| ES | 11206 | 139842 | 6924 | 26207440919678 | 97.13% |
+| ES | 11195 | 139788 | 6925 | 26207440919934 | 97.13% |
 | ET | 95 | 1478 | 132 | 1117513173302 | 99.97% |
-| FI | 4135 | 58643 | 28930 | 6857211863567 | 96.61% |
+| FI | 4120 | 58642 | 28852 | 6857211994697 | 96.71% |
 | FJ | 110 | 594 | 119 | 43363073068 | 99.51% |
 | FK | 38 | 26 | 81 | 544143654 | 44.62% |
 | FM | 56 | 49 | 106 | 8953067835 | 88.23% |
 | FO | 48 | 181 | 91 | 108270320172 | 99.54% |
-| FR | 28098 | 325600 | 20410 | 67346430898069 | 98.51% |
+| FR | 28132 | 325571 | 20410 | 67346430898069 | 98.51% |
 | GA | 89 | 1559 | 102 | 35744991527 | 94.32% |
-| GB | 40703 | 498865 | 57928 | 106033847050863 | 94.08% |
+| GB | 40712 | 498874 | 57928 | 106033847050863 | 94.09% |
 | GD | 101 | 128 | 101 | 82688014890 | 96.90% |
 | GE | 488 | 5108 | 345 | 1797448223095 | 95.68% |
-| GF | 235 | 251 | 82 | 23008899368 | 97.40% |
-| GG | 137 | 263 | 96 | 146471778863 | 81.57% |
+| GF | 227 | 255 | 82 | 23008899368 | 97.40% |
+| GG | 146 | 261 | 96 | 146471778863 | 81.57% |
 | GH | 373 | 8926 | 262 | 1232395749217 | 99.79% |
-| GI | 148 | 327 | 113 | 198008895787 | 91.23% |
+| GI | 149 | 327 | 113 | 198008895787 | 91.23% |
 | GL | 108 | 145 | 171 | 43603915133 | 99.30% |
-| GM | 76 | 1102 | 111 | 39552387627 | 99.04% |
+| GM | 76 | 1102 | 110 | 39552387626 | 99.04% |
 | GN | 75 | 172 | 114 | 48242362665 | 97.28% |
-| GP | 231 | 795 | 102 | 54391032119 | 73.08% |
+| GP | 224 | 797 | 102 | 54391032119 | 73.08% |
 | GQ | 56 | 95 | 92 | 9487272233 | 95.90% |
 | GR | 1535 | 23127 | 997 | 2592006046748 | 96.46% |
 | GS | 4 | 2 | 41 | 389148949 | 59.18% |
@@ -231,37 +231,37 @@ Confidence measures agreement among participating provider groups, not measured 
 | GU | 158 | 990 | 125 | 34908795451 | 99.32% |
 | GW | 50 | 42 | 95 | 9319500075 | 96.98% |
 | GY | 57 | 288 | 110 | 35006118190 | 99.18% |
-| HK | 13598 | 94959 | 7961 | 5142575611862 | 85.83% |
+| HK | 13613 | 95006 | 7961 | 5142575546278 | 85.83% |
 | HM | 1 | 2 | 7 | 17965056 | 49.38% |
 | HN | 831 | 1992 | 264 | 391906802561 | 94.76% |
-| HR | 864 | 9687 | 436 | 1591501315598 | 96.38% |
+| HR | 865 | 9687 | 436 | 1591501315598 | 96.38% |
 | HT | 89 | 624 | 134 | 26450983744 | 93.37% |
-| HU | 1939 | 23373 | 1340 | 3217193401768 | 98.25% |
-| ID | 7053 | 85395 | 5085 | 3792028451197 | 98.45% |
-| IE | 8318 | 72149 | 8170 | 4921994182406 | 89.13% |
-| IL | 2451 | 39288 | 1533 | 4302329931957 | 97.44% |
+| HU | 1939 | 23370 | 1340 | 3217193401768 | 98.25% |
+| ID | 7059 | 85395 | 5085 | 3792028451197 | 98.45% |
+| IE | 8340 | 72147 | 8170 | 4921994182406 | 89.13% |
+| IL | 2447 | 39289 | 1533 | 4302329931957 | 97.44% |
 | IM | 345 | 474 | 194 | 361538861887 | 96.14% |
-| IN | 13418 | 197209 | 17967 | 28987603821051 | 97.91% |
+| IN | 13420 | 197211 | 17963 | 28987603821047 | 97.91% |
 | IO | 33 | 15 | 82 | 4737857834 | 96.08% |
 | IQ | 681 | 3342 | 973 | 3415550739613 | 96.90% |
-| IR | 1965 | 42725 | 2225 | 16859158416501 | 98.53% |
+| IR | 1968 | 42724 | 2225 | 16859158416501 | 98.53% |
 | IS | 339 | 3642 | 504 | 1605333849215 | 96.23% |
-| IT | 10024 | 227832 | 9208 | 46978083385751 | 99.09% |
-| JE | 223 | 641 | 121 | 219655158317 | 95.45% |
+| IT | 10019 | 227831 | 9208 | 46978083385751 | 99.09% |
+| JE | 224 | 643 | 121 | 219655158317 | 95.45% |
 | JM | 254 | 1132 | 158 | 1122124888925 | 99.96% |
 | JO | 445 | 2705 | 253 | 1121935489373 | 97.90% |
-| JP | 12617 | 782300 | 14587 | 52720738655756 | 88.45% |
-| KE | 1097 | 25118 | 646 | 671057099191 | 98.83% |
+| JP | 12636 | 782372 | 14582 | 52720738655757 | 88.45% |
+| KE | 1093 | 25116 | 646 | 671057099191 | 98.83% |
 | KG | 234 | 1179 | 221 | 529224088428 | 99.25% |
 | KH | 559 | 2011 | 306 | 434970882921 | 81.10% |
 | KI | 78 | 35 | 132 | 13519288651 | 92.47% |
 | KM | 61 | 51 | 87 | 9353097509 | 96.74% |
 | KN | 116 | 164 | 103 | 5747112504 | 77.10% |
 | KP | 9 | 11 | 416 | 499597873 | 55.62% |
-| KR | 3966 | 455234 | 3754 | 22750793135952 | 99.65% |
+| KR | 3973 | 455237 | 3754 | 22750793135952 | 99.65% |
 | KW | 418 | 7567 | 213 | 876851815103 | 99.77% |
 | KY | 126 | 439 | 107 | 17845780019 | 99.15% |
-| KZ | 1326 | 13961 | 1207 | 3150624081455 | 86.62% |
+| KZ | 1328 | 13960 | 1207 | 3150624081455 | 86.62% |
 | LA | 150 | 452 | 154 | 121244152367 | 88.18% |
 | LB | 391 | 2388 | 291 | 3015892022341 | 98.08% |
 | LC | 89 | 167 | 89 | 78374500900 | 97.54% |
@@ -269,53 +269,53 @@ Confidence measures agreement among participating provider groups, not measured 
 | LK | 295 | 2327 | 268 | 82539459192 | 92.58% |
 | LR | 79 | 437 | 105 | 27241253419 | 97.76% |
 | LS | 71 | 507 | 92 | 26751353129 | 98.32% |
-| LT | 1470 | 12218 | 959 | 4368449755342 | 84.92% |
-| LU | 1549 | 6705 | 869 | 2188410848879 | 96.22% |
-| LV | 1238 | 8164 | 773 | 3235809242589 | 65.68% |
+| LT | 1469 | 12222 | 959 | 4368449755342 | 84.92% |
+| LU | 1550 | 6713 | 869 | 2188410848879 | 96.22% |
+| LV | 1237 | 8163 | 773 | 3235809242589 | 65.68% |
 | LY | 151 | 1923 | 109 | 99581329724 | 89.62% |
 | MA | 346 | 48129 | 270 | 1171116196775 | 99.78% |
 | MC | 281 | 284 | 114 | 142217116462 | 99.87% |
-| MD | 772 | 4958 | 976 | 5931591679572 | 64.14% |
+| MD | 772 | 4958 | 976 | 5931591679572 | 64.24% |
 | ME | 148 | 823 | 136 | 348170439737 | 99.48% |
 | MF | 57 | 103 | 88 | 5359122734 | 92.88% |
 | MG | 88 | 2308 | 118 | 22676603701 | 98.05% |
 | MH | 71 | 90 | 81 | 4789645610 | 95.44% |
 | MK | 250 | 2798 | 190 | 1142897917037 | 96.63% |
 | ML | 85 | 388 | 89 | 22640603437 | 97.58% |
-| MM | 461 | 1166 | 340 | 353154101885 | 97.56% |
+| MM | 461 | 1167 | 340 | 353154101885 | 97.56% |
 | MN | 242 | 739 | 286 | 133921321329 | 99.24% |
 | MO | 107 | 1500 | 702 | 39132300347 | 99.13% |
 | MP | 76 | 18 | 76 | 4771148076 | 95.56% |
-| MQ | 308 | 819 | 70 | 104798763299 | 89.70% |
+| MQ | 313 | 814 | 70 | 104798763299 | 89.70% |
 | MR | 70 | 232 | 95 | 26483030314 | 98.94% |
 | MS | 30 | 15 | 77 | 626850351 | 51.57% |
-| MT | 320 | 2678 | 229 | 501360950327 | 93.67% |
-| MU | 2032 | 23886 | 8150 | 4455217983291963 | 100.00% |
-| MV | 117 | 401 | 140 | 18197508407 | 97.47% |
+| MT | 321 | 2678 | 229 | 501360950327 | 93.67% |
+| MU | 2029 | 23887 | 8150 | 4455217983291963 | 100.00% |
+| MV | 118 | 401 | 140 | 18197508407 | 97.47% |
 | MW | 124 | 2200 | 146 | 1242314408240 | 99.85% |
 | MX | 4392 | 122274 | 2756 | 3629849010520 | 96.72% |
-| MY | 2862 | 34672 | 1473 | 911705346881 | 95.78% |
-| MZ | 194 | 1911 | 136 | 69652267324 | 97.38% |
-| NA | 358 | 1856 | 186 | 29151347245 | 99.39% |
+| MY | 2864 | 34674 | 1473 | 911705346881 | 95.78% |
+| MZ | 195 | 1911 | 136 | 69652267324 | 97.38% |
+| NA | 412 | 1854 | 186 | 29151347245 | 99.39% |
 | NC | 74 | 571 | 108 | 47875881524 | 99.52% |
 | NE | 61 | 217 | 93 | 22121672997 | 98.71% |
 | NF | 33 | 2 | 79 | 358742318 | 59.47% |
-| NG | 1112 | 12938 | 882 | 604634397057 | 98.29% |
+| NG | 1109 | 12937 | 882 | 604634397057 | 98.29% |
 | NI | 176 | 1731 | 123 | 95154338118 | 98.22% |
-| NL | 23882 | 215107 | 501309 | 8408915274000200 | 99.94% |
+| NL | 23884 | 215083 | 501308 | 8408915273999943 | 99.94% |
 | NO | 3219 | 63858 | 2847 | 10943233165389 | 97.37% |
 | NP | 472 | 2389 | 347 | 434489348453 | 93.37% |
 | NR | 40 | 53 | 87 | 8917678381 | 98.61% |
 | NU | 27 | 11 | 76 | 4671404329 | 96.82% |
-| NZ | 2293 | 29285 | 1780 | 1359949316620 | 95.35% |
+| NZ | 2293 | 29285 | 1779 | 1359948268044 | 95.35% |
 | OM | 304 | 4418 | 205 | 595054621015 | 96.04% |
 | PA | 537 | 7101 | 473 | 429343311418 | 92.60% |
-| PE | 1294 | 14883 | 1099 | 1072377720866 | 96.46% |
-| PF | 88 | 312 | 142 | 21857106267 | 99.35% |
+| PE | 1293 | 14884 | 1099 | 1072377720866 | 96.46% |
+| PF | 91 | 312 | 142 | 21857106267 | 99.35% |
 | PG | 263 | 349 | 155 | 73449140811 | 91.78% |
-| PH | 2250 | 26769 | 1309 | 1046351426103 | 97.62% |
-| PK | 1428 | 23635 | 748 | 907362091513 | 97.65% |
-| PL | 8640 | 83053 | 5345 | 28443875031891 | 97.03% |
+| PH | 2251 | 26771 | 1309 | 1046351426103 | 97.62% |
+| PK | 1427 | 23636 | 748 | 907362091513 | 97.65% |
+| PL | 8641 | 83054 | 5346 | 28443875162963 | 97.03% |
 | PM | 44 | 25 | 78 | 4670356012 | 96.79% |
 | PN | 5 | 2 | 41 | 355531030 | 60.85% |
 | PR | 665 | 4576 | 346 | 230653880976 | 99.07% |
@@ -323,18 +323,18 @@ Confidence measures agreement among participating provider groups, not measured 
 | PT | 1901 | 27023 | 2067 | 3328580079057 | 92.98% |
 | PW | 48 | 43 | 82 | 9084268845 | 97.54% |
 | PY | 444 | 5087 | 274 | 451683365755 | 97.34% |
-| QA | 489 | 5169 | 372 | 526342861020 | 96.21% |
-| RE | 358 | 1994 | 103 | 95638171954 | 96.44% |
-| RO | 4051 | 28313 | 2517 | 5569648810805 | 95.60% |
-| RS | 1048 | 9071 | 1400 | 1853001231015 | 98.28% |
-| RU | 13565 | 180645 | 15574 | 54467518821273 | 90.30% |
+| QA | 483 | 5170 | 372 | 526342861020 | 96.21% |
+| RE | 382 | 2009 | 103 | 95638171954 | 96.44% |
+| RO | 4047 | 28311 | 2516 | 5569648810805 | 95.60% |
+| RS | 1049 | 9071 | 1400 | 1853001231015 | 98.28% |
+| RU | 13574 | 180640 | 15579 | 54493288625053 | 90.28% |
 | RW | 199 | 1264 | 125 | 1147541537324 | 99.91% |
 | SA | 1653 | 46656 | 924 | 2815426340300 | 96.13% |
 | SB | 54 | 71 | 87 | 17657887270 | 94.77% |
-| SC | 1070 | 2832 | 3351 | 3336783065884 | 61.78% |
+| SC | 1073 | 2844 | 3351 | 3319603196700 | 61.59% |
 | SD | 115 | 7412 | 110 | 69686719027 | 97.39% |
-| SE | 16101 | 126269 | 57194 | 30392290210248 | 79.88% |
-| SG | 10776 | 107653 | 52167 | 151211297336070 | 97.12% |
+| SE | 16097 | 126241 | 57186 | 30392290079176 | 79.89% |
+| SG | 10764 | 107649 | 52168 | 151228477205254 | 97.12% |
 | SH | 6 | 2 | 132 | 590805251 | 54.52% |
 | SI | 1083 | 10325 | 661 | 2113819497145 | 95.56% |
 | SJ | 7 | 2 | 42 | 390265106 | 60.69% |
@@ -358,33 +358,33 @@ Confidence measures agreement among participating provider groups, not measured 
 | TJ | 148 | 392 | 171 | 636925623101 | 98.12% |
 | TK | 24 | 15 | 110 | 4789041456 | 95.39% |
 | TL | 88 | 126 | 104 | 43595854126 | 96.44% |
-| TM | 62 | 126 | 106 | 69265914425 | 99.64% |
+| TM | 63 | 126 | 106 | 69265914425 | 99.64% |
 | TN | 150 | 30817 | 148 | 116746957630 | 97.54% |
 | TO | 47 | 55 | 87 | 17540182314 | 99.20% |
-| TR | 3740 | 68022 | 2877 | 22512559396958 | 93.53% |
+| TR | 3722 | 68022 | 2880 | 22486789593182 | 93.66% |
 | TT | 167 | 2226 | 151 | 1177239829329 | 70.56% |
 | TV | 41 | 46 | 91 | 11247679782 | 88.42% |
 | TW | 2551 | 147478 | 3078 | 11501070048589 | 98.79% |
 | TZ | 357 | 4488 | 251 | 267349570933 | 98.78% |
-| UA | 4977 | 34793 | 3321 | 11790964416670 | 93.24% |
+| UA | 4986 | 34794 | 3321 | 11790964416670 | 93.24% |
 | UG | 271 | 5773 | 185 | 132373893694 | 95.54% |
 | UM | 5 | 2 | 73 | 322828587 | 60.31% |
-| US | 134547 | 5881701 | 501980 | 4835635624411196 | 99.76% |
+| US | 134501 | 5882095 | 501985 | 4835635625526386 | 99.76% |
 | UY | 248 | 10380 | 192 | 177573474372 | 99.81% |
-| UZ | 556 | 1659 | 277 | 1083166673772 | 99.45% |
+| UZ | 554 | 1659 | 277 | 1083166673772 | 99.45% |
 | VA | 35 | 51 | 107 | 103209056811 | 99.95% |
 | VC | 82 | 104 | 89 | 69482625322 | 99.68% |
 | VE | 978 | 30273 | 722 | 2253462508287 | 99.23% |
-| VG | 344 | 556 | 407 | 251162925362 | 87.77% |
+| VG | 342 | 556 | 407 | 251162925362 | 87.77% |
 | VI | 85 | 532 | 184 | 30583835973 | 92.45% |
-| VN | 2264 | 65537 | 1666 | 1860176708883 | 99.18% |
+| VN | 2265 | 65539 | 1665 | 1860176708882 | 99.18% |
 | VU | 65 | 86 | 282 | 51950517296 | 79.82% |
 | WF | 22 | 16 | 69 | 4770756905 | 95.50% |
 | WS | 60 | 97 | 92 | 21852058154 | 92.79% |
-| XK | 189 | 623 | 73 | 111805005814 | 60.60% |
+| XK | 194 | 622 | 73 | 111805005814 | 60.60% |
 | YE | 116 | 958 | 122 | 207080387643 | 99.82% |
-| YT | 42 | 45 | 78 | 635433256 | 56.23% |
-| ZA | 5227 | 117984 | 3456 | 23435221689936 | 99.55% |
+| YT | 54 | 54 | 78 | 635433256 | 56.23% |
+| ZA | 5225 | 117983 | 3455 | 23435221689937 | 99.55% |
 | ZM | 357 | 6506 | 157 | 44204360274 | 95.69% |
 | ZW | 257 | 931 | 200 | 65564843623 | 98.33% |
 
